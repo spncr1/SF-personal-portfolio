@@ -1,0 +1,63 @@
+:root {
+  --color-bg: #070706;
+  --color-bg-deep: #030302;
+  --color-bg-elevated: #0d0d0b;
+  --color-surface: #121210;
+  --color-surface-hover: #1a1a16;
+  --color-surface-glass: rgba(14, 14, 12, 0.78);
+  --color-border: rgba(245, 196, 0, 0.22);
+  --color-border-strong: rgba(245, 196, 0, 0.45);
+  --color-border-faint: rgba(244, 241, 230, 0.08);
+
+  --color-accent: #f5c400;
+  --color-accent-hot: #ffd84a;
+  --color-accent-dim: #9a7a00;
+  --color-accent-glow: rgba(245, 196, 0, 0.45);
+  --color-accent-haze: rgba(245, 196, 0, 0.08);
+
+  --color-secondary: #3ad4ff;
+  --color-secondary-dim: #1a6a88;
+  --color-secondary-glow: rgba(58, 212, 255, 0.35);
+
+  --color-amber: #e8943a;
+  --color-text: #f4f1e6;
+  --color-text-muted: #8a8678;
+  --color-text-faint: #5c5a52;
+
+  --font-primary: var(--font-exo), "Eurostile", "Avenir Next", system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", monospace;
+
+  --space-3xs: 0.0625rem;
+  --space-2xs: 0.125rem;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.75rem;
+  --space-xl: 3rem;
+  --space-2xl: 5rem;
+
+  --text-xs: 0.625rem;
+  --text-sm: 0.75rem;
+  --text-md: 0.875rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2.25rem;
+  --text-3xl: 3.5rem;
+
+  --line-thin: 1px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --header-height: 3.75rem;
+  --footer-height: 2.25rem;
+  --shell-pad: 1.25rem;
+  --stage-max: 88rem;
+
+  --z-shell: 20;
+  --z-minimap: 30;
+  --z-boot: 50;
+
+  --glow-accent: 0 0 18px var(--color-accent-glow);
+  --glow-accent-strong: 0 0 28px var(--color-accent-glow), 0 0 64px rgba(245, 196, 0, 0.18);
+  --glow-secondary: 0 0 18px var(--color-secondary-glow);
+  --shadow-panel: 0 18px 80px rgba(0, 0, 0, 0.42);
+}

@@ -1,0 +1,65 @@
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes status-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 4px currentColor;
+    opacity: 0.75;
+  }
+  50% {
+    box-shadow: 0 0 10px currentColor;
+    opacity: 1;
+  }
+}
+
+@keyframes boot-ring-scan {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sector-scan-ready {
+  0% {
+    opacity: 0;
+    transform: translateY(-0.75rem);
+  }
+  18%,
+  72% {
+    opacity: 0.75;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0.35rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
