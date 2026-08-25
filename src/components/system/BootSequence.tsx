@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import { gsap } from "gsap";
 
 interface BootSequenceProps {
@@ -9,7 +10,7 @@ interface BootSequenceProps {
 
 const bootLines = [
   { id: "identify", label: "Identify", value: "SF monogram verified" },
-  { id: "retrieve", label: "Retrieve", value: "Sector topology linked" },
+  { id: "retrieve", label: "Retrieve", value: "Sector network linked" },
   { id: "construct", label: "Construct", value: "Interface shell mounted" },
   { id: "ready", label: "Ready", value: "Central Hub access granted" },
 ];
@@ -89,7 +90,16 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
       <div className="boot-sequence__frame">
         <div className="boot-sequence__mark" aria-hidden="true">
           <span className="boot-sequence__ring" />
-          <span className="boot-sequence__monogram">SF</span>
+          <span className="boot-sequence__monogram">
+            <Image
+              src="/brand/spencer-fisher-logo.png"
+              alt=""
+              width={160}
+              height={160}
+              style={{ width: "100%", height: "100%" }}
+              priority
+            />
+          </span>
         </div>
 
         <div className="boot-sequence__copy">

@@ -1,5 +1,6 @@
 import { Exo_2, JetBrains_Mono } from "next/font/google";
 import type { Metadata } from "next";
+import "mapbox-gl/dist/mapbox-gl.css";
 import "@/styles/globals.css";
 import "@/styles/animations.css";
 import "@/styles/hud.css";
@@ -18,7 +19,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Spencer — Operations System",
+  title: "Central Hub | Spencer Fisher",
   description: "Personal software engineering portfolio",
 };
 

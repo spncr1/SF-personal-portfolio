@@ -44,13 +44,6 @@ export function SystemShell({ children }: SystemShellProps) {
       <div className="system-shell__grid" aria-hidden="true" />
 
       <header className="system-shell__header">
-        <div className="system-shell__brand">
-          <span className="system-shell__monogram">SF</span>
-          <span className="system-shell__brand-text">
-            Fisher <span aria-hidden="true">/</span> Operations
-          </span>
-        </div>
-
         <dl className="system-shell__meta">
           <div className="system-shell__meta-item">
             <dt>Sector</dt>
@@ -59,12 +52,12 @@ export function SystemShell({ children }: SystemShellProps) {
             </dd>
           </div>
           <div className="system-shell__meta-item">
-            <dt>Coord</dt>
+            <dt>Coordinates</dt>
             <dd>{formatSectorCoordinates(sector)}</dd>
           </div>
         </dl>
 
-        <StatusIndicator status={isHub ? "online" : "active"} label={isHub ? "System online" : "Sector active"} />
+        {!isHub && <StatusIndicator status="active" label="Sector active" />}
       </header>
 
       <main className="system-shell__content">
@@ -77,8 +70,8 @@ export function SystemShell({ children }: SystemShellProps) {
       </main>
 
       <footer className="system-shell__footer">
-        <span>SYS.2099 / Persistent shell</span>
-        <span>{isHub ? "Hub topology" : "Minimap linked"}</span>
+        <span>SYS-2099</span>
+        <span>© 2026 Spencer Fisher / Personal interface</span>
       </footer>
 
       {bootState === "running" && <BootSequence onComplete={completeBoot} />}

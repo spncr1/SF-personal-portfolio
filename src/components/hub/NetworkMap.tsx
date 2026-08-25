@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { NetworkNode } from "./NetworkNode";
 import { NetworkPath } from "./NetworkPath";
 import { connections, formatSectorCoordinates, sectors } from "@/data/navigation";
+import { profile } from "@/data/profile";
 import type { SectorId } from "@/types/navigation";
 
 export function NetworkMap() {
@@ -18,16 +19,16 @@ export function NetworkMap() {
     <div className="network-map-shell">
       <div className="network-map-shell__hud network-map-shell__hud--left" aria-hidden="true">
         <span>SYS READY</span>
-        <span>TOPOLOGY / 05</span>
+        <span>SECTORS / 05</span>
       </div>
       <div className="network-map-shell__hud network-map-shell__hud--right" aria-hidden="true">
         <span>HUB-00</span>
-        <span>{activeNode ? formatSectorCoordinates(activeNode) : hub ? formatSectorCoordinates(hub) : "00.00° / 00.00°"}</span>
+        <span>Coordinates {activeNode ? formatSectorCoordinates(activeNode) : hub ? formatSectorCoordinates(hub) : "00.00 / 00.00"}</span>
       </div>
 
       <svg
         className="network-map"
-        viewBox="0 0 100 100"
+        viewBox="10 8 80 88"
         aria-label="Central Hub network"
         onPointerLeave={() => setActiveSector(null)}
       >
@@ -45,11 +46,30 @@ export function NetworkMap() {
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
+          <filter id="network-portrait-grade">
+            <feColorMatrix
+              type="matrix"
+              values="0.72 0.18 0.06 0 0.05  0.2 0.68 0.08 0 0.02  0.08 0.12 0.5 0 0  0 0 0 0.86 0"
+            />
+            <feComponentTransfer>
+              <feFuncR type="linear" slope="0.78" intercept="0.03" />
+              <feFuncG type="linear" slope="0.72" intercept="0.02" />
+              <feFuncB type="linear" slope="0.54" />
+            </feComponentTransfer>
+          </filter>
           <linearGradient id="network-path-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="rgba(245, 196, 0, 0.18)" />
-            <stop offset="55%" stopColor="rgba(245, 196, 0, 0.78)" />
-            <stop offset="100%" stopColor="rgba(58, 212, 255, 0.28)" />
+            <stop offset="0%" stopColor="rgba(224, 138, 70, 0.16)" />
+            <stop offset="55%" stopColor="rgba(255, 201, 60, 0.82)" />
+            <stop offset="100%" stopColor="rgba(140, 47, 28, 0.28)" />
           </linearGradient>
+          <clipPath id="network-portrait-clip">
+            <polygon points={hexPoints(0, 0, 9.15)} />
+          </clipPath>
+          <radialGradient id="network-core-aura" cx="50%" cy="45%" r="58%">
+            <stop offset="0%" stopColor="rgba(255, 201, 60, 0.38)" />
+            <stop offset="58%" stopColor="rgba(255, 140, 46, 0.14)" />
+            <stop offset="100%" stopColor="rgba(7, 7, 7, 0)" />
+          </radialGradient>
         </defs>
 
         <g className="network-map__field" aria-hidden="true">
@@ -76,12 +96,24 @@ export function NetworkMap() {
             className="network-core"
             transform={`translate(${hub.coordinates.x * 100}, ${hub.coordinates.y * 100})`}
           >
-            <polygon className="network-core__outer" points={hexPoints(0, 0, 9.2)} />
-            <polygon className="network-core__inner" points={hexPoints(0, 0, 5.4)} />
-            <text className="network-core__mark" textAnchor="middle" dominantBaseline="middle">
-              SF
-            </text>
-            <text className="network-core__label" textAnchor="middle" y="13">
+            <circle className="network-core__aura" r="16.4" />
+            <circle className="network-core__orbit network-core__orbit--outer" r="12.5" />
+            <circle className="network-core__orbit network-core__orbit--inner" r="10.2" />
+            <polygon className="network-core__outer" points={hexPoints(0, 0, 9.7)} />
+            <polygon className="network-core__portrait-backdrop" points={hexPoints(0, 0, 9.05)} />
+            <image
+              className="network-core__portrait"
+              href={profile.portrait}
+              x="-9.1"
+              y="-9.1"
+              width="18.2"
+              height="18.2"
+              preserveAspectRatio="xMidYMid slice"
+              clipPath="url(#network-portrait-clip)"
+            />
+            <polygon className="network-core__portrait-ring" points={hexPoints(0, 0, 9.05)} />
+            <polygon className="network-core__portrait-scan" points={hexPoints(0, 0, 7.55)} />
+            <text className="network-core__label" textAnchor="middle" y="14.6">
               HUB-00
             </text>
           </g>
@@ -102,9 +134,9 @@ export function NetworkMap() {
       </svg>
 
       <aside className="network-readout" aria-live="polite">
-        <span className="network-readout__kicker">Active vector</span>
+        <span className="network-readout__kicker">Active section</span>
         <strong>{activeNode?.label ?? "Central Hub"}</strong>
-        <span>{activeNode ? formatSectorCoordinates(activeNode) : "Network ready"}</span>
+        <span>Coordinates {activeNode ? formatSectorCoordinates(activeNode) : hub ? formatSectorCoordinates(hub) : "00.00 / 00.00"}</span>
       </aside>
     </div>
   );

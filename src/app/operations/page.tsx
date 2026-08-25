@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import { HudPanel } from "@/components/ui/HudPanel";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
 import { SystemLabel } from "@/components/ui/SystemLabel";
 import { operations } from "@/data/operations";
+
+export const metadata: Metadata = {
+  title: "Active Operations | Spencer Fisher",
+};
 
 const operationPanels = [
   {

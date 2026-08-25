@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import { HudPanel } from "@/components/ui/HudPanel";
 import { SystemLabel } from "@/components/ui/SystemLabel";
+
+export const metadata: Metadata = {
+  title: "Communications | Spencer Fisher",
+};
 
 export default function CommunicationsPage() {
   return (

@@ -24,45 +24,62 @@ export function getSectorFromPathname(pathname: string): SectorNode {
 export function formatSectorCoordinates(sector: SectorNode): string {
   const x = (sector.coordinates.x * 180).toFixed(2);
   const y = (sector.coordinates.y * 90).toFixed(2);
-  return `${x}° / ${y}°`;
+  return `${x} / ${y}`;
 }
 
 export const sectors: SectorNode[] = [
   {
     id: "hub",
     label: "Central Hub",
+    shortLabel: "Hub",
+    descriptor: "System overview",
     route: "/",
-    coordinates: { x: 0.5, y: 0.5 },
+    coordinates: { x: 0.5, y: 0.53 },
   },
   {
     id: "projects",
     label: "Project Systems",
+    shortLabel: "Projects",
+    descriptor: "Engineering work",
     route: "/projects",
-    coordinates: { x: 0.2, y: 0.3 },
+    coordinates: { x: 0.25, y: 0.35 },
+    icon: "/icons/sectors/project-systems.svg",
   },
   {
     id: "capabilities",
     label: "Capabilities",
+    shortLabel: "Capabilities",
+    descriptor: "Technical stack",
     route: "/capabilities",
-    coordinates: { x: 0.8, y: 0.25 },
+    coordinates: { x: 0.75, y: 0.35 },
+    icon: "/icons/sectors/capabilities.svg",
   },
   {
     id: "personnel",
     label: "Personnel",
+    shortLabel: "Personnel",
+    descriptor: "Operator profile",
     route: "/personnel",
-    coordinates: { x: 0.15, y: 0.7 },
+    coordinates: { x: 0.25, y: 0.75 },
+    icon: "/icons/sectors/personnel.svg",
   },
   {
     id: "operations",
     label: "Active Operations",
+    shortLabel: "Operations",
+    descriptor: "Current activity",
     route: "/operations",
-    coordinates: { x: 0.5, y: 0.78 },
+    coordinates: { x: 0.5, y: 0.2 },
+    icon: "/icons/sectors/active-operations.svg",
   },
   {
     id: "communications",
     label: "Communications",
+    shortLabel: "Comms",
+    descriptor: "Connect",
     route: "/communications",
-    coordinates: { x: 0.85, y: 0.75 },
+    coordinates: { x: 0.75, y: 0.75 },
+    icon: "/icons/sectors/communications.svg",
   },
 ];
 

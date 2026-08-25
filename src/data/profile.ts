@@ -12,7 +12,7 @@ export interface Profile {
 
 export const profile: Profile = {
   name: "Spencer Fisher",
-  title: "Software Engineering Student (UTS) | Backend Systems & API Development",
+  title: "Software Engineer • Builder • Problem Solver",
   education: "Bachelor of Engineering (Honors), Software Engineering, UTS - graduating 2026",
   summary:
     "Final-year UTS Software Engineering student focused on backend development and scalable system design, with experience building full-stack applications and data-driven systems.",
@@ -40,4 +40,5 @@ export const profile: Profile = {
     "Confluence",
   ],
   personalInterests: [],
+  portrait: "/images/profile/spencer-fisher.jpg",
 };

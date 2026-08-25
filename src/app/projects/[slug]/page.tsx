@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getProjectBySlug } from "@/data/projects";
 import { HudPanel } from "@/components/ui/HudPanel";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
@@ -7,6 +8,17 @@ import { notFound } from "next/navigation";
 
 interface ProjectInspectionPageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: ProjectInspectionPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const project = getProjectBySlug(slug);
+
+  return {
+    title: `${project?.title ?? "Project Inspection"} | Spencer Fisher`,
+  };
 }
 
 export default async function ProjectInspectionPage({

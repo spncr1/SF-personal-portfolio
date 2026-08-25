@@ -1,5 +1,4 @@
 import type { SectorNode } from "@/types/navigation";
-import { formatSectorCoordinates, sectorCodes } from "@/data/navigation";
 
 interface NetworkNodeProps {
   sector: SectorNode;
@@ -32,17 +31,26 @@ export function NetworkNode({ sector, active = false, onActivate, onClear, onNav
       onFocus={onActivate}
       onBlur={onClear}
     >
-      <circle className="network-node__halo" r="9.5" />
-      <polygon className="network-node__hex" points={hexPoints(0, 0, 5.2)} />
-      <circle className="network-node__pin" r="1.45" />
-      <text className="network-node__code" textAnchor="middle" y="-8.4">
-        {sectorCodes[sector.id]}
-      </text>
-      <text className="network-node__label" textAnchor="middle" dominantBaseline="middle" y="9.8">
+      <circle className="network-node__halo" r="10.4" />
+      <polygon className="network-node__hex" points={hexPoints(0, 0, 6.15)} />
+      {sector.icon ? (
+        <image
+          className="network-node__icon"
+          href={sector.icon}
+          x="-3.35"
+          y="-3.35"
+          width="6.7"
+          height="6.7"
+          preserveAspectRatio="xMidYMid meet"
+        />
+      ) : (
+        <circle className="network-node__pin" r="1.7" />
+      )}
+      <text className="network-node__label" textAnchor="middle" dominantBaseline="middle" y="12.6">
         {sector.label}
       </text>
-      <text className="network-node__coord" textAnchor="middle" y="15.1">
-        {formatSectorCoordinates(sector)}
+      <text className="network-node__descriptor" textAnchor="middle" y="16.4">
+        {sector.descriptor}
       </text>
     </g>
   );
