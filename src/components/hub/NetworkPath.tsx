@@ -32,11 +32,11 @@ export function NetworkPath({ connection, active = false }: NetworkPathProps) {
           className="network-path__station"
           cx={tick.x}
           cy={tick.y}
-          r="0.55"
+          r="0.82"
         />
       ))}
       {active && (
-        <circle className="network-path__packet" r="0.75">
+        <circle className="network-path__packet" r="1.05">
           <animateMotion dur="0.92s" repeatCount="indefinite" path={d} />
         </circle>
       )}

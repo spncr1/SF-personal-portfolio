@@ -2,11 +2,11 @@ import type { NetworkConnection, SectorId, SectorNode } from "@/types/navigation
 
 export const sectorCodes: Record<SectorId, string> = {
   hub: "HUB-00",
-  projects: "SEC-01",
+  operations: "SEC-01",
   capabilities: "SEC-02",
-  personnel: "SEC-03",
-  operations: "SEC-04",
-  communications: "SEC-05",
+  communications: "SEC-03",
+  personnel: "SEC-04",
+  projects: "SEC-05",
 };
 
 export function getSectorFromPathname(pathname: string): SectorNode {
@@ -37,13 +37,13 @@ export const sectors: SectorNode[] = [
     coordinates: { x: 0.5, y: 0.53 },
   },
   {
-    id: "projects",
-    label: "Project Systems",
-    shortLabel: "Projects",
-    descriptor: "Engineering work",
-    route: "/projects",
-    coordinates: { x: 0.25, y: 0.35 },
-    icon: "/icons/sectors/project-systems.svg",
+    id: "operations",
+    label: "Active Operations",
+    shortLabel: "Operations",
+    descriptor: "Current activities",
+    route: "/operations",
+    coordinates: { x: 0.5, y: 0.17 },
+    icon: "/icons/sectors/active-operations.svg",
   },
   {
     id: "capabilities",
@@ -51,26 +51,8 @@ export const sectors: SectorNode[] = [
     shortLabel: "Capabilities",
     descriptor: "Technical stack",
     route: "/capabilities",
-    coordinates: { x: 0.75, y: 0.35 },
+    coordinates: { x: 0.78, y: 0.34 },
     icon: "/icons/sectors/capabilities.svg",
-  },
-  {
-    id: "personnel",
-    label: "Personnel",
-    shortLabel: "Personnel",
-    descriptor: "Operator profile",
-    route: "/personnel",
-    coordinates: { x: 0.25, y: 0.75 },
-    icon: "/icons/sectors/personnel.svg",
-  },
-  {
-    id: "operations",
-    label: "Active Operations",
-    shortLabel: "Operations",
-    descriptor: "Current activity",
-    route: "/operations",
-    coordinates: { x: 0.5, y: 0.2 },
-    icon: "/icons/sectors/active-operations.svg",
   },
   {
     id: "communications",
@@ -78,15 +60,33 @@ export const sectors: SectorNode[] = [
     shortLabel: "Comms",
     descriptor: "Connect",
     route: "/communications",
-    coordinates: { x: 0.75, y: 0.75 },
+    coordinates: { x: 0.78, y: 0.76 },
     icon: "/icons/sectors/communications.svg",
+  },
+  {
+    id: "personnel",
+    label: "Personnel",
+    shortLabel: "Personnel",
+    descriptor: "Operator profile",
+    route: "/personnel",
+    coordinates: { x: 0.22, y: 0.76 },
+    icon: "/icons/sectors/personnel.svg",
+  },
+  {
+    id: "projects",
+    label: "Project Systems",
+    shortLabel: "Projects",
+    descriptor: "Engineering work",
+    route: "/projects",
+    coordinates: { x: 0.22, y: 0.34 },
+    icon: "/icons/sectors/project-systems.svg",
   },
 ];
 
 export const connections: NetworkConnection[] = [
-  { from: "hub", to: "projects" },
-  { from: "hub", to: "capabilities" },
-  { from: "hub", to: "personnel" },
   { from: "hub", to: "operations" },
+  { from: "hub", to: "capabilities" },
   { from: "hub", to: "communications" },
+  { from: "hub", to: "personnel" },
+  { from: "hub", to: "projects" },
 ];

@@ -6,7 +6,6 @@ import { createPortal } from "react-dom";
 import mapboxgl from "mapbox-gl";
 
 const sydneyLngLat: [number, number] = [151.2093, -33.8688];
-const worldView: [number, number] = [22, 2];
 
 interface SydneyMapExplorerProps {
   accessToken: string | null;
@@ -42,7 +41,7 @@ export function SydneyMapExplorer({ accessToken }: SydneyMapExplorerProps) {
 
     const mapContainer = mapContainerRef.current;
 
-    if (!mapboxgl.supported({ failIfMajorPerformanceCaveat: true })) {
+    if (!mapboxgl.supported(true)) {
       const fallbackSync = window.setTimeout(() => setMapFailed(true), 0);
 
       return () => window.clearTimeout(fallbackSync);
@@ -57,17 +56,18 @@ export function SydneyMapExplorer({ accessToken }: SydneyMapExplorerProps) {
       map = new mapboxgl.Map({
         accessToken,
         attributionControl: false,
-        center: worldView,
+        center: sydneyLngLat,
         cooperativeGestures: true,
         container: mapContainer,
         dragRotate: false,
         maxZoom: 8,
         minZoom: 0.65,
         pitchWithRotate: false,
+        projection: "globe",
         scrollZoom: false,
         style: "mapbox://styles/mapbox/dark-v11",
         touchZoomRotate: true,
-        zoom: 0.9,
+        zoom: 1.35,
       });
     } catch {
       const fallbackSync = window.setTimeout(() => setMapFailed(true), 0);

@@ -10,6 +10,9 @@ interface NetworkNodeProps {
 
 export function NetworkNode({ sector, active = false, onActivate, onClear, onNavigate }: NetworkNodeProps) {
   const { x, y } = sector.coordinates;
+  const isLowerNode = y > 0.7;
+  const labelY = isLowerNode ? 13.8 : 15.8;
+  const descriptorY = isLowerNode ? 17.8 : 20.1;
 
   return (
     <g
@@ -31,25 +34,25 @@ export function NetworkNode({ sector, active = false, onActivate, onClear, onNav
       onFocus={onActivate}
       onBlur={onClear}
     >
-      <circle className="network-node__halo" r="10.4" />
-      <polygon className="network-node__hex" points={hexPoints(0, 0, 6.15)} />
+      <circle className="network-node__halo" r="13.2" />
+      <polygon className="network-node__hex" points={hexPoints(0, 0, 7.85)} />
       {sector.icon ? (
         <image
           className="network-node__icon"
           href={sector.icon}
-          x="-3.35"
-          y="-3.35"
-          width="6.7"
-          height="6.7"
+          x="-4.35"
+          y="-4.35"
+          width="8.7"
+          height="8.7"
           preserveAspectRatio="xMidYMid meet"
         />
       ) : (
-        <circle className="network-node__pin" r="1.7" />
+        <circle className="network-node__pin" r="2.2" />
       )}
-      <text className="network-node__label" textAnchor="middle" dominantBaseline="middle" y="12.6">
+      <text className="network-node__label" textAnchor="middle" dominantBaseline="middle" y={labelY}>
         {sector.label}
       </text>
-      <text className="network-node__descriptor" textAnchor="middle" y="16.4">
+      <text className="network-node__descriptor" textAnchor="middle" y={descriptorY}>
         {sector.descriptor}
       </text>
     </g>

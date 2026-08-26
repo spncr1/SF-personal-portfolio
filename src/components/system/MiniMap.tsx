@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { connections, sectors } from "@/data/navigation";
@@ -29,9 +28,6 @@ export function MiniMap({ activeSector }: MiniMapProps) {
         <NetworkCanvas activeSector={activeSector} compact />
 
         <div className="minimap__actions">
-          <Link href="/" className="minimap__hub-link">
-            Return to Central Hub
-          </Link>
           <button
             className="minimap__expand"
             type="button"
@@ -53,17 +49,12 @@ export function MiniMap({ activeSector }: MiniMapProps) {
           />
           <div className="minimap-modal__panel">
             <div className="minimap-modal__header">
-              <SystemLabel>Sector Network</SystemLabel>
+              <SystemLabel>Section Network</SystemLabel>
               <button type="button" onClick={() => setExpanded(false)}>
                 Close
               </button>
             </div>
             <NetworkCanvas activeSector={activeSector} />
-            <div className="minimap-modal__actions">
-              <Link href="/" className="minimap-modal__hub-link" onClick={() => setExpanded(false)}>
-                Return to Central Hub
-              </Link>
-            </div>
           </div>
         </div>
       )}
@@ -82,7 +73,7 @@ function NetworkCanvas({ activeSector, compact = false }: MiniMapProps & { compa
     <svg
       className={compact ? "minimap__canvas minimap__canvas--compact" : "minimap__canvas minimap__canvas--expanded"}
       viewBox="0 0 100 100"
-      aria-label="Sector network map"
+      aria-label="Section network map"
     >
       {hub &&
         connections.map((conn) => {
@@ -103,7 +94,7 @@ function NetworkCanvas({ activeSector, compact = false }: MiniMapProps & { compa
 
       {hub && (
         <g
-          aria-label="Return to Central Hub"
+          aria-label="Central Hub"
           className="minimap__core-link"
           role="link"
           tabIndex={0}

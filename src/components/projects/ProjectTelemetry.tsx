@@ -32,7 +32,7 @@ export function ProjectTelemetry({ project }: ProjectTelemetryProps) {
       </dl>
 
       <div className="project-telemetry__tags">
-        <SystemLabel variant="metadata">Sector tags</SystemLabel>
+        <SystemLabel variant="metadata">Section tags</SystemLabel>
         <span>{project.category}</span>
         <span>{project.role ?? "Independent project"}</span>
       </div>

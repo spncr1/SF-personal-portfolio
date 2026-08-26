@@ -14,7 +14,7 @@ export default function CommunicationsPage() {
           <SystemLabel>Communications</SystemLabel>
           <h1>Contact Relay</h1>
         </div>
-        <span>SEC-05 / Pending</span>
+        <span>SEC-03 / Pending</span>
       </div>
 
       <div className="sector-frame__grid">

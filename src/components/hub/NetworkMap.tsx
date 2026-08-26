@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { NetworkNode } from "./NetworkNode";
 import { NetworkPath } from "./NetworkPath";
-import { connections, formatSectorCoordinates, sectors } from "@/data/navigation";
+import { connections, formatSectorCoordinates, sectorCodes, sectors } from "@/data/navigation";
 import { profile } from "@/data/profile";
 import type { SectorId } from "@/types/navigation";
 
@@ -14,23 +14,29 @@ export function NetworkMap() {
   const sectorNodes = sectors.filter((sector) => sector.id !== "hub");
   const [activeSector, setActiveSector] = useState<SectorId | null>(null);
   const activeNode = sectorNodes.find((sector) => sector.id === activeSector);
+  const previewNode = activeNode ?? hub;
+
+  const updateActiveSector = (sectorId: SectorId | null) => {
+    setActiveSector(sectorId);
+    window.dispatchEvent(new CustomEvent("sf-ops-section-preview", { detail: sectorId }));
+  };
 
   return (
     <div className="network-map-shell">
       <div className="network-map-shell__hud network-map-shell__hud--left" aria-hidden="true">
         <span>SYS READY</span>
-        <span>SECTORS / 05</span>
+        <span>SECTIONS: 05</span>
       </div>
       <div className="network-map-shell__hud network-map-shell__hud--right" aria-hidden="true">
-        <span>HUB-00</span>
-        <span>Coordinates {activeNode ? formatSectorCoordinates(activeNode) : hub ? formatSectorCoordinates(hub) : "00.00 / 00.00"}</span>
+        <span>{previewNode ? sectorCodes[previewNode.id] : "HUB-00"}</span>
+        <span>Coordinates {previewNode ? formatSectorCoordinates(previewNode) : "00.00 / 00.00"}</span>
       </div>
 
       <svg
         className="network-map"
         viewBox="10 8 80 88"
         aria-label="Central Hub network"
-        onPointerLeave={() => setActiveSector(null)}
+        onPointerLeave={() => updateActiveSector(null)}
       >
         <defs>
           <filter id="network-node-glow" x="-80%" y="-80%" width="260%" height="260%">
@@ -58,17 +64,17 @@ export function NetworkMap() {
             </feComponentTransfer>
           </filter>
           <linearGradient id="network-path-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="rgba(224, 138, 70, 0.16)" />
-            <stop offset="55%" stopColor="rgba(255, 201, 60, 0.82)" />
-            <stop offset="100%" stopColor="rgba(140, 47, 28, 0.28)" />
+            <stop offset="0%" stopColor="var(--palette-ember)" stopOpacity="0.16" />
+            <stop offset="55%" stopColor="var(--palette-gold-soft)" stopOpacity="0.82" />
+            <stop offset="100%" stopColor="var(--palette-rust)" stopOpacity="0.28" />
           </linearGradient>
           <clipPath id="network-portrait-clip">
-            <polygon points={hexPoints(0, 0, 9.15)} />
+            <polygon points={hexPoints(0, 0, 12.25)} />
           </clipPath>
           <radialGradient id="network-core-aura" cx="50%" cy="45%" r="58%">
-            <stop offset="0%" stopColor="rgba(255, 201, 60, 0.38)" />
-            <stop offset="58%" stopColor="rgba(255, 140, 46, 0.14)" />
-            <stop offset="100%" stopColor="rgba(7, 7, 7, 0)" />
+            <stop offset="0%" stopColor="var(--palette-gold-soft)" stopOpacity="0.38" />
+            <stop offset="58%" stopColor="var(--palette-neon-ember)" stopOpacity="0.14" />
+            <stop offset="100%" stopColor="var(--palette-charcoal-deep)" stopOpacity="0" />
           </radialGradient>
         </defs>
 
@@ -96,24 +102,24 @@ export function NetworkMap() {
             className="network-core"
             transform={`translate(${hub.coordinates.x * 100}, ${hub.coordinates.y * 100})`}
           >
-            <circle className="network-core__aura" r="16.4" />
-            <circle className="network-core__orbit network-core__orbit--outer" r="12.5" />
-            <circle className="network-core__orbit network-core__orbit--inner" r="10.2" />
-            <polygon className="network-core__outer" points={hexPoints(0, 0, 9.7)} />
-            <polygon className="network-core__portrait-backdrop" points={hexPoints(0, 0, 9.05)} />
+            <circle className="network-core__aura" r="23" />
+            <circle className="network-core__orbit network-core__orbit--outer" r="17.2" />
+            <circle className="network-core__orbit network-core__orbit--inner" r="14.1" />
+            <polygon className="network-core__outer" points={hexPoints(0, 0, 12.9)} />
+            <polygon className="network-core__portrait-backdrop" points={hexPoints(0, 0, 12.05)} />
             <image
               className="network-core__portrait"
               href={profile.portrait}
-              x="-9.1"
-              y="-9.1"
-              width="18.2"
-              height="18.2"
+              x="-12.2"
+              y="-12.2"
+              width="24.4"
+              height="24.4"
               preserveAspectRatio="xMidYMid slice"
               clipPath="url(#network-portrait-clip)"
             />
-            <polygon className="network-core__portrait-ring" points={hexPoints(0, 0, 9.05)} />
-            <polygon className="network-core__portrait-scan" points={hexPoints(0, 0, 7.55)} />
-            <text className="network-core__label" textAnchor="middle" y="14.6">
+            <polygon className="network-core__portrait-ring" points={hexPoints(0, 0, 12.05)} />
+            <polygon className="network-core__portrait-scan" points={hexPoints(0, 0, 10.35)} />
+            <text className="network-core__label" textAnchor="middle" y="18.9">
               HUB-00
             </text>
           </g>
@@ -125,8 +131,8 @@ export function NetworkMap() {
               key={sector.id}
               sector={sector}
               active={activeSector === sector.id}
-              onActivate={() => setActiveSector(sector.id)}
-              onClear={() => setActiveSector(null)}
+              onActivate={() => updateActiveSector(sector.id)}
+              onClear={() => updateActiveSector(null)}
               onNavigate={() => router.push(sector.route)}
             />
           ))}

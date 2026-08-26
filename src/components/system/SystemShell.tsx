@@ -3,11 +3,12 @@
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { formatSectorCoordinates, getSectorFromPathname, sectorCodes } from "@/data/navigation";
+import { formatSectorCoordinates, getSectorFromPathname, sectorCodes, sectors } from "@/data/navigation";
 import { BootSequence } from "./BootSequence";
 import { MiniMap } from "./MiniMap";
 import { SectorTransition } from "./SectorTransition";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
+import type { SectorId } from "@/types/navigation";
 
 interface SystemShellProps {
   children: ReactNode;
@@ -21,6 +22,11 @@ export function SystemShell({ children }: SystemShellProps) {
   const sector = getSectorFromPathname(pathname);
   const isHub = sector.id === "hub";
   const [bootState, setBootState] = useState<"checking" | "running" | "complete">("checking");
+  const [previewSectorId, setPreviewSectorId] = useState<SectorId | null>(null);
+  const previewSector = isHub && previewSectorId
+    ? sectors.find((candidate) => candidate.id === previewSectorId)
+    : undefined;
+  const displayedSector = previewSector ?? sector;
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -28,6 +34,27 @@ export function SystemShell({ children }: SystemShellProps) {
       setBootState(bootComplete ? "complete" : "running");
     });
   }, []);
+
+  useEffect(() => {
+    if (!isHub) {
+      return;
+    }
+
+    const handlePreview = (event: Event) => {
+      const detail = (event as CustomEvent<SectorId | null>).detail;
+      const nextSectorId = detail && sectors.some((candidate) => candidate.id === detail)
+        ? detail
+        : null;
+
+      setPreviewSectorId(nextSectorId);
+    };
+
+    window.addEventListener("sf-ops-section-preview", handlePreview);
+
+    return () => {
+      window.removeEventListener("sf-ops-section-preview", handlePreview);
+    };
+  }, [isHub]);
 
   const completeBoot = useCallback(() => {
     window.sessionStorage.setItem(BOOT_SESSION_KEY, "true");
@@ -46,18 +73,18 @@ export function SystemShell({ children }: SystemShellProps) {
       <header className="system-shell__header">
         <dl className="system-shell__meta">
           <div className="system-shell__meta-item">
-            <dt>Sector</dt>
+            <dt>Section</dt>
             <dd>
-              {sectorCodes[sector.id]} {sector.label}
+              {sectorCodes[displayedSector.id]} {displayedSector.label}
             </dd>
           </div>
           <div className="system-shell__meta-item">
             <dt>Coordinates</dt>
-            <dd>{formatSectorCoordinates(sector)}</dd>
+            <dd>{formatSectorCoordinates(displayedSector)}</dd>
           </div>
         </dl>
 
-        {!isHub && <StatusIndicator status="active" label="Sector active" />}
+        {!isHub && <StatusIndicator status="active" label="Section active" />}
       </header>
 
       <main className="system-shell__content">

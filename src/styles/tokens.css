@@ -1,33 +1,84 @@
 :root {
-  --color-bg: #1a1b1e;
-  --color-bg-deep: #141416;
-  --color-bg-elevated: #1d1d20;
-  --color-surface: #1a1b1e;
-  --color-surface-hover: #242126;
-  --color-surface-glass: rgba(18, 18, 17, 0.76);
-  --color-border: rgba(224, 138, 70, 0.28);
-  --color-border-strong: rgba(255, 201, 60, 0.55);
-  --color-border-faint: rgba(235, 226, 205, 0.09);
+  --palette-charcoal: #1a1b1e;
+  --palette-charcoal-deep: #141416;
+  --palette-ember: #e08a46;
+  --palette-rust: #8c2f1c;
+  --palette-slate: #2e3b52;
+  --palette-gold-soft: #f0c888;
+  --palette-neon-ember: #ff8c2e;
+  --palette-neon-rust: #ff3d1f;
+  --palette-neon-slate: #2e7bff;
+  --palette-neon-gold: #ffc93c;
 
-  --color-accent: #ffc93c;
-  --color-accent-hot: #ffe38a;
-  --color-accent-dim: #9d6f1c;
-  --color-accent-glow: rgba(255, 201, 60, 0.48);
-  --color-accent-haze: rgba(255, 201, 60, 0.1);
+  --rgb-charcoal: 26, 27, 30;
+  --rgb-charcoal-deep: 20, 20, 22;
+  --rgb-ember: 224, 138, 70;
+  --rgb-rust: 140, 47, 28;
+  --rgb-slate: 46, 59, 82;
+  --rgb-gold-soft: 240, 200, 136;
+  --rgb-neon-ember: 255, 140, 46;
+  --rgb-neon-rust: 255, 61, 31;
+  --rgb-neon-slate: 46, 123, 255;
+  --rgb-neon-gold: 255, 201, 60;
+  --rgb-black: 0, 0, 0;
+  --rgb-white: 255, 255, 255;
 
-  --color-ember: #ff8c2e;
-  --color-rust: #8c2f1c;
-  --color-slate: #2e3b52;
-  --color-slate-bright: #2e3b52;
+  --surface-charcoal-glass: rgba(var(--rgb-charcoal-deep), 0.76);
+  --surface-slate-hover: rgba(var(--rgb-slate), 0.18);
+  --border-ember-muted: rgba(var(--rgb-ember), 0.32);
+  --border-gold-soft: rgba(var(--rgb-gold-soft), 0.58);
+  --border-slate-faint: rgba(var(--rgb-slate), 0.18);
+  --text-gold-muted: rgba(var(--rgb-gold-soft), 0.72);
+  --text-gold-faint: rgba(var(--rgb-gold-soft), 0.42);
+  --glow-gold-soft: rgba(var(--rgb-neon-gold), 0.34);
+  --glow-gold-faint: rgba(var(--rgb-neon-gold), 0.08);
+  --glow-ember-soft: rgba(var(--rgb-neon-ember), 0.28);
+  --glow-slate-faint: rgba(var(--rgb-neon-slate), 0.14);
 
-  --color-secondary: #e08a46;
-  --color-secondary-dim: #8c2f1c;
-  --color-secondary-glow: rgba(255, 140, 46, 0.32);
+  --role-background: var(--palette-charcoal);
+  --role-background-deep: var(--palette-charcoal-deep);
+  --role-panel: var(--palette-charcoal);
+  --role-chrome: var(--palette-ember);
+  --role-chrome-strong: var(--palette-neon-ember);
+  --role-shadow: var(--palette-rust);
+  --role-text: var(--palette-gold-soft);
+  --role-active: var(--palette-neon-gold);
+  --role-diagnostic: var(--palette-neon-slate);
+  --role-alert: var(--palette-neon-rust);
 
-  --color-amber: #e08a46;
-  --color-text: #f0c888;
-  --color-text-muted: #a79781;
-  --color-text-faint: #665d52;
+  --color-bg: var(--role-background);
+  --color-bg-deep: var(--role-background-deep);
+  --color-bg-elevated: var(--role-background-deep);
+  --color-surface: var(--role-panel);
+  --color-surface-hover: var(--surface-slate-hover);
+  --color-surface-glass: var(--surface-charcoal-glass);
+  --color-border: var(--border-ember-muted);
+  --color-border-strong: var(--border-gold-soft);
+  --color-border-faint: var(--border-slate-faint);
+
+  --color-accent: var(--role-text);
+  --color-accent-hot: var(--role-active);
+  --color-accent-dim: var(--role-chrome);
+  --color-accent-glow: rgba(var(--rgb-gold-soft), 0.26);
+  --color-accent-haze: rgba(var(--rgb-gold-soft), 0.08);
+
+  --color-ember: var(--role-chrome-strong);
+  --color-rust: var(--role-shadow);
+  --color-rust-hot: var(--role-alert);
+  --color-slate: var(--palette-slate);
+  --color-slate-bright: var(--role-diagnostic);
+
+  --color-secondary: var(--role-chrome);
+  --color-secondary-dim: var(--role-shadow);
+  --color-secondary-glow: var(--glow-ember-soft);
+  --color-diagnostic: var(--role-diagnostic);
+  --color-diagnostic-glow: var(--glow-slate-faint);
+  --color-alert: var(--role-alert);
+
+  --color-amber: var(--role-chrome);
+  --color-text: var(--role-text);
+  --color-text-muted: var(--text-gold-muted);
+  --color-text-faint: var(--text-gold-faint);
 
   --font-display: "Eurostile", var(--font-exo), "Avenir Next", system-ui, sans-serif;
   --font-hud: "Bank Gothic", "BankGothic Md BT", var(--font-jetbrains), ui-monospace, "SF Mono", monospace;
@@ -65,7 +116,7 @@
   --z-boot: 50;
 
   --glow-accent: 0 0 18px var(--color-accent-glow);
-  --glow-accent-strong: 0 0 28px var(--color-accent-glow), 0 0 64px rgba(245, 196, 0, 0.18);
+  --glow-accent-strong: 0 0 28px var(--color-accent-glow), 0 0 64px rgba(var(--rgb-neon-gold), 0.14);
   --glow-secondary: 0 0 18px var(--color-secondary-glow);
-  --shadow-panel: 0 18px 80px rgba(0, 0, 0, 0.42);
+  --shadow-panel: 0 18px 80px rgba(var(--rgb-black), 0.42);
 }

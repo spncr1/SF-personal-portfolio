@@ -15,7 +15,7 @@ export default function PersonnelPage() {
           <SystemLabel>Personnel</SystemLabel>
           <h1>Personnel Record</h1>
         </div>
-        <span>SEC-03 / Pending</span>
+        <span>SEC-04 / Pending</span>
       </div>
 
       <div className="sector-frame__grid">

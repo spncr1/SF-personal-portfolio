@@ -32,7 +32,7 @@ export default function CapabilitiesPage() {
         </HudPanel>
 
         <HudPanel label="Data source" tone="accent">
-          <p>Project and skill data modules are available for this sector when implementation begins.</p>
+          <p>Project and skill data modules are available for this section when implementation begins.</p>
         </HudPanel>
       </div>
     </section>

@@ -5,6 +5,5 @@ export async function getGitHubActivity() {
     return null;
   }
 
-  // GitHub API integration placeholder
   return { username: GITHUB_USERNAME };
 }

@@ -1,15 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { CountUpValue } from "@/components/ui/CountUpValue";
 import type { GitHubSummary } from "@/types/github";
 
 type LoadState = "loading" | "ready" | "error";
-
-function formatNumber(value: number) {
-  return new Intl.NumberFormat("en-AU", {
-    maximumFractionDigits: 0,
-  }).format(value);
-}
 
 function formatRelativeTime(value: string | null) {
   if (!value) return "No pushes";
@@ -72,7 +67,7 @@ export function GitHubIntel() {
           <span>GitHub Live</span>
           <strong>Syncing</strong>
         </div>
-        <p className="central-hub__github-message">Repository telemetry handshake in progress.</p>
+        <p className="central-hub__github-message">Repository telemetry access link in progress.</p>
       </section>
     );
   }
@@ -103,16 +98,22 @@ export function GitHubIntel() {
       <dl className="central-hub__github-intel">
         <div>
           <dt>Repositories</dt>
-          <dd>{formatNumber(summary.publicRepos)}</dd>
+          <dd>
+            <CountUpValue value={summary.publicRepos} />
+          </dd>
         </div>
         <div>
           <dt>Active repos</dt>
-          <dd>{formatNumber(summary.activeRepos)}</dd>
+          <dd>
+            <CountUpValue value={summary.activeRepos} delayMs={90} />
+          </dd>
         </div>
         <div>
           <dt>Stars / forks</dt>
           <dd>
-            {formatNumber(summary.totalStars)} / {formatNumber(summary.totalForks)}
+            <CountUpValue value={summary.totalStars} delayMs={180} />
+            <span className="system-count__divider">/</span>
+            <CountUpValue value={summary.totalForks} delayMs={240} />
           </dd>
         </div>
         <div>
@@ -137,7 +138,7 @@ export function GitHubIntel() {
           {summary.topLanguages.map((language) => (
             <li key={language.name}>
               {language.name}
-              <span>{language.count}</span>
+              <CountUpValue value={language.count} delayMs={320} />
             </li>
           ))}
         </ul>

@@ -4,6 +4,7 @@ import { GitHubIntel } from "@/components/hub/GitHubIntel";
 import { NetworkMap } from "@/components/hub/NetworkMap";
 import { SydneyMap } from "@/components/hub/SydneyMap";
 import { SydneyClock } from "@/components/hub/SydneyClock";
+import { CountUpValue } from "@/components/ui/CountUpValue";
 import { SystemLabel } from "@/components/ui/SystemLabel";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
 
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 export default function CentralHubPage() {
   return (
     <section className="central-hub">
-      <aside className="central-hub__rail central-hub__rail--left" aria-label="System status">
+      <aside className="central-hub__rail central-hub__rail--left" aria-label="System status" data-system-load>
         <div className="central-hub__status-card">
           <StatusIndicator status="online" label="System online" />
         </div>
@@ -32,7 +33,9 @@ export default function CentralHubPage() {
             </div>
             <div>
               <dt>Sync</dt>
-              <dd>100%</dd>
+              <dd>
+                <CountUpValue value={100} delayMs={620} suffix="%" />
+              </dd>
             </div>
           </dl>
         </div>
@@ -50,12 +53,12 @@ export default function CentralHubPage() {
         </div>
       </aside>
 
-      <div className="central-hub__main">
-        <div className="central-hub__masthead">
+      <div className="central-hub__main" data-system-load>
+        <div className="central-hub__masthead" data-system-load>
           <SystemLabel>Central Hub</SystemLabel>
         </div>
 
-        <header className="central-hub__intro">
+        <header className="central-hub__intro" data-system-load>
           <h1>WELCOME TO SPENCER FISHER&apos;S DIGITAL CORNER OF THE WORLD</h1>
           <span>Software Engineer • Builder • Problem Solver</span>
         </header>
@@ -63,15 +66,15 @@ export default function CentralHubPage() {
         <NetworkMap />
       </div>
 
-      <aside className="central-hub__rail central-hub__rail--right" aria-label="System intel">
+      <aside className="central-hub__rail central-hub__rail--right" aria-label="System intel" data-system-load>
         <SystemLabel variant="metadata">System Intel</SystemLabel>
         <GitHubIntel />
         <SydneyMap />
       </aside>
 
-      <div className="central-hub__bottom-bar" aria-hidden="true">
-        <span>SYS-2099</span>
-        <span>SF Operations System v2.0</span>
+      <div className="central-hub__bottom-bar" aria-hidden="true" data-system-load>
+        <span />
+        <span>SF // Operations System v2.0.</span>
         <span>© 2026 Spencer Fisher Interface</span>
       </div>
     </section>
