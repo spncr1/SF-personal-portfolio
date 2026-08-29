@@ -48,7 +48,7 @@ export function SydneyMapExplorer({ accessToken }: SydneyMapExplorerProps) {
     }
 
     const beacon = document.createElement("span");
-    beacon.className = "central-hub__mapbox-beacon";
+    beacon.className = "central-hub__mapbox-location";
 
     let map: mapboxgl.Map;
 
@@ -150,7 +150,6 @@ export function SydneyMapExplorer({ accessToken }: SydneyMapExplorerProps) {
                   height={640}
                   unoptimized
                 />
-                <span className="central-hub__map-beacon" aria-hidden="true" />
               </div>
             )}
           </div>

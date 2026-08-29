@@ -179,13 +179,17 @@ ul {
   filter: drop-shadow(0 0 4px var(--color-secondary-glow));
 }
 
+.network-map__stations {
+  pointer-events: none;
+}
+
 .network-map-shell {
   position: relative;
   min-height: 0;
   height: 100%;
   border: 0;
   background: transparent;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .network-map-shell::before,
@@ -1169,7 +1173,7 @@ ul {
 }
 
 .system-shell[data-sector="hub"] .system-shell__content {
-  overflow: hidden;
+  overflow: visible;
 }
 
 .central-hub {
@@ -1207,7 +1211,7 @@ ul {
   gap: clamp(0.45rem, 1vw, 0.8rem);
   height: 100%;
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .central-hub__main::before {
@@ -1524,8 +1528,8 @@ ul {
 
 .central-hub__map-beacon {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 79%;
+  left: 72%;
   z-index: 2;
   width: 0.44rem;
   height: 0.44rem;
@@ -1674,33 +1678,28 @@ ul {
   display: none;
 }
 
-.central-hub__mapbox-beacon {
+.central-hub__mapbox-location {
   position: relative;
   display: block;
-  width: 0.52rem;
-  height: 0.52rem;
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 999px;
   background: var(--palette-neon-ember);
   box-shadow:
-    0 0 0 1px rgba(var(--rgb-gold-soft), 0.58),
-    0 0 16px rgba(var(--rgb-neon-ember), 0.82),
-    0 0 34px rgba(var(--rgb-ember), 0.42);
+    0 0 0 1px rgba(var(--rgb-gold-soft), 0.62),
+    0 0 12px rgba(var(--rgb-neon-ember), 0.78),
+    0 0 22px rgba(var(--rgb-ember), 0.38);
 }
 
-.central-hub__mapbox-beacon::before,
-.central-hub__mapbox-beacon::after {
+.central-hub__mapbox-location::after {
   content: "";
   position: absolute;
   inset: 50% auto auto 50%;
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 1px solid rgba(var(--rgb-neon-ember), 0.5);
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid rgba(var(--rgb-neon-ember), 0.42);
   border-radius: inherit;
   transform: translate(-50%, -50%);
-}
-
-.central-hub__mapbox-beacon::after {
-  animation: map-beacon-pulse 1.8s ease-out infinite;
 }
 
 @keyframes map-beacon-pulse {
@@ -1912,6 +1911,11 @@ ul {
 
 .central-hub__bottom-bar span:last-child {
   text-align: right;
+}
+
+.system-shell[data-sector="hub"][data-boot="checking"] .central-hub,
+.system-shell[data-sector="hub"][data-boot="running"] .central-hub {
+  visibility: hidden;
 }
 
 .system-shell[data-boot="complete"][data-sector="hub"] .central-hub__rail,

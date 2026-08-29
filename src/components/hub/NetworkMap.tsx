@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { NetworkNode } from "./NetworkNode";
-import { NetworkPath } from "./NetworkPath";
+import { NetworkPath, NetworkStation } from "./NetworkPath";
 import { connections, formatSectorCoordinates, sectorCodes, sectors } from "@/data/navigation";
 import { profile } from "@/data/profile";
+import { hexPoints } from "@/lib/networkGeometry";
 import type { SectorId } from "@/types/navigation";
 
 export function NetworkMap() {
@@ -34,7 +35,7 @@ export function NetworkMap() {
 
       <svg
         className="network-map"
-        viewBox="10 8 80 88"
+        viewBox="0 0 100 100"
         aria-label="Central Hub network"
         onPointerLeave={() => updateActiveSector(null)}
       >
@@ -69,7 +70,7 @@ export function NetworkMap() {
             <stop offset="100%" stopColor="var(--palette-rust)" stopOpacity="0.28" />
           </linearGradient>
           <clipPath id="network-portrait-clip">
-            <polygon points={hexPoints(0, 0, 12.25)} />
+            <polygon points={hexPoints(0, 0, 15.8)} />
           </clipPath>
           <radialGradient id="network-core-aura" cx="50%" cy="45%" r="58%">
             <stop offset="0%" stopColor="var(--palette-gold-soft)" stopOpacity="0.38" />
@@ -102,24 +103,24 @@ export function NetworkMap() {
             className="network-core"
             transform={`translate(${hub.coordinates.x * 100}, ${hub.coordinates.y * 100})`}
           >
-            <circle className="network-core__aura" r="23" />
-            <circle className="network-core__orbit network-core__orbit--outer" r="17.2" />
-            <circle className="network-core__orbit network-core__orbit--inner" r="14.1" />
-            <polygon className="network-core__outer" points={hexPoints(0, 0, 12.9)} />
-            <polygon className="network-core__portrait-backdrop" points={hexPoints(0, 0, 12.05)} />
+            <circle className="network-core__aura" r="29" />
+            <circle className="network-core__orbit network-core__orbit--outer" r="22.2" />
+            <circle className="network-core__orbit network-core__orbit--inner" r="18.1" />
+            <polygon className="network-core__outer" points={hexPoints(0, 0, 16.7)} />
+            <polygon className="network-core__portrait-backdrop" points={hexPoints(0, 0, 15.8)} />
             <image
               className="network-core__portrait"
               href={profile.portrait}
-              x="-12.2"
-              y="-12.2"
-              width="24.4"
-              height="24.4"
+              x="-15.9"
+              y="-15.9"
+              width="31.8"
+              height="31.8"
               preserveAspectRatio="xMidYMid slice"
               clipPath="url(#network-portrait-clip)"
             />
-            <polygon className="network-core__portrait-ring" points={hexPoints(0, 0, 12.05)} />
-            <polygon className="network-core__portrait-scan" points={hexPoints(0, 0, 10.35)} />
-            <text className="network-core__label" textAnchor="middle" y="18.9">
+            <polygon className="network-core__portrait-ring" points={hexPoints(0, 0, 15.8)} />
+            <polygon className="network-core__portrait-scan" points={hexPoints(0, 0, 13.7)} />
+            <text className="network-core__label" textAnchor="middle" y="23.2">
               HUB-00
             </text>
           </g>
@@ -137,6 +138,12 @@ export function NetworkMap() {
             />
           ))}
         </g>
+
+        <g className="network-map__stations" aria-hidden="true">
+          {connections.map((conn) => (
+            <NetworkStation key={`${conn.from}-${conn.to}-station`} connection={conn} />
+          ))}
+        </g>
       </svg>
 
       <aside className="network-readout" aria-live="polite">
@@ -146,11 +153,4 @@ export function NetworkMap() {
       </aside>
     </div>
   );
-}
-
-function hexPoints(cx: number, cy: number, r: number): string {
-  return Array.from({ length: 6 }, (_, i) => {
-    const angle = (Math.PI / 3) * i - Math.PI / 6;
-    return `${cx + r * Math.cos(angle)},${cy + r * Math.sin(angle)}`;
-  }).join(" ");
 }

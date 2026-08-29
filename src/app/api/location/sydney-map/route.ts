@@ -30,7 +30,7 @@ export async function GET() {
     });
   }
 
-  const center = "151.2093,-33.8688,1.1,0";
+  const center = "115,-12,1.45,0";
   const mapUrl = new URL(`https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/${center}/640x320@2x`);
   mapUrl.searchParams.set("access_token", token);
   mapUrl.searchParams.set("attribution", "false");

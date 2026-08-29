@@ -1,4 +1,24 @@
 import type { NetworkConnection, SectorId, SectorNode } from "@/types/navigation";
+import { getHexCornerPoint, type HexCorner, type NetworkPoint } from "@/lib/networkGeometry";
+
+type OuterSectorId = Exclude<SectorId, "hub">;
+
+export const networkNodeRadii = {
+  hub: 16.7,
+  node: 7.85,
+} as const;
+
+export const hubConnectionAnchors: Record<OuterSectorId, { from: HexCorner; to: HexCorner }> = {
+  operations: { from: "top", to: "bottom" },
+  capabilities: { from: "upperRight", to: "lowerLeft" },
+  communications: { from: "lowerRight", to: "upperLeft" },
+  personnel: { from: "lowerLeft", to: "upperRight" },
+  projects: { from: "upperLeft", to: "lowerRight" },
+};
+
+const hubCoordinates = { x: 0.5, y: 0.53 };
+const hubPoint = toNetworkPoint(hubCoordinates);
+const nodeDistanceFromHubCorner = 15;
 
 export const sectorCodes: Record<SectorId, string> = {
   hub: "HUB-00",
@@ -34,7 +54,7 @@ export const sectors: SectorNode[] = [
     shortLabel: "Hub",
     descriptor: "System overview",
     route: "/",
-    coordinates: { x: 0.5, y: 0.53 },
+    coordinates: hubCoordinates,
   },
   {
     id: "operations",
@@ -42,7 +62,7 @@ export const sectors: SectorNode[] = [
     shortLabel: "Operations",
     descriptor: "Current activities",
     route: "/operations",
-    coordinates: { x: 0.5, y: 0.17 },
+    coordinates: getRayAlignedNodeCoordinates("operations"),
     icon: "/icons/sectors/active-operations.svg",
   },
   {
@@ -51,7 +71,7 @@ export const sectors: SectorNode[] = [
     shortLabel: "Capabilities",
     descriptor: "Technical stack",
     route: "/capabilities",
-    coordinates: { x: 0.78, y: 0.34 },
+    coordinates: getRayAlignedNodeCoordinates("capabilities"),
     icon: "/icons/sectors/capabilities.svg",
   },
   {
@@ -60,7 +80,7 @@ export const sectors: SectorNode[] = [
     shortLabel: "Comms",
     descriptor: "Connect",
     route: "/communications",
-    coordinates: { x: 0.78, y: 0.76 },
+    coordinates: getRayAlignedNodeCoordinates("communications"),
     icon: "/icons/sectors/communications.svg",
   },
   {
@@ -69,7 +89,7 @@ export const sectors: SectorNode[] = [
     shortLabel: "Personnel",
     descriptor: "Operator profile",
     route: "/personnel",
-    coordinates: { x: 0.22, y: 0.76 },
+    coordinates: getRayAlignedNodeCoordinates("personnel"),
     icon: "/icons/sectors/personnel.svg",
   },
   {
@@ -78,7 +98,7 @@ export const sectors: SectorNode[] = [
     shortLabel: "Projects",
     descriptor: "Engineering work",
     route: "/projects",
-    coordinates: { x: 0.22, y: 0.34 },
+    coordinates: getRayAlignedNodeCoordinates("projects"),
     icon: "/icons/sectors/project-systems.svg",
   },
 ];
@@ -90,3 +110,32 @@ export const connections: NetworkConnection[] = [
   { from: "hub", to: "personnel" },
   { from: "hub", to: "projects" },
 ];
+
+function getRayAlignedNodeCoordinates(sectorId: OuterSectorId): { x: number; y: number } {
+  const anchors = hubConnectionAnchors[sectorId];
+  const hubCorner = getHexCornerPoint(hubPoint, networkNodeRadii.hub, anchors.from);
+  const nodeCornerOffset = getHexCornerPoint({ x: 0, y: 0 }, networkNodeRadii.node, anchors.to);
+  const cornerDirection = {
+    x: (hubCorner.x - hubPoint.x) / networkNodeRadii.hub,
+    y: (hubCorner.y - hubPoint.y) / networkNodeRadii.hub,
+  };
+
+  return toSectorCoordinates({
+    x: hubCorner.x + cornerDirection.x * nodeDistanceFromHubCorner - nodeCornerOffset.x,
+    y: hubCorner.y + cornerDirection.y * nodeDistanceFromHubCorner - nodeCornerOffset.y,
+  });
+}
+
+function toNetworkPoint(coordinates: { x: number; y: number }): NetworkPoint {
+  return {
+    x: coordinates.x * 100,
+    y: coordinates.y * 100,
+  };
+}
+
+function toSectorCoordinates(point: NetworkPoint): { x: number; y: number } {
+  return {
+    x: point.x / 100,
+    y: point.y / 100,
+  };
+}
