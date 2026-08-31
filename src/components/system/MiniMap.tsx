@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { connections, sectors } from "@/data/navigation";
 import { HudPanel } from "@/components/ui/HudPanel";
 import { SystemLabel } from "@/components/ui/SystemLabel";
+import { MiniMapHexBackdrop } from "./MiniMapHexBackdrop";
 import { getHexBoundaryPoint, hexPoints } from "@/lib/networkGeometry";
 
 interface MiniMapProps {
@@ -15,6 +16,61 @@ export function MiniMap({ activeSector }: MiniMapProps) {
   const nodes = sectors.filter((sector) => sector.id !== "hub");
   const active = nodes.find((sector) => sector.id === activeSector);
   const [expanded, setExpanded] = useState(false);
+  const expandButtonRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!expanded) return;
+
+    const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const focusTimer = window.setTimeout(() => closeButtonRef.current?.focus(), 0);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setExpanded(false);
+        return;
+      }
+
+      if (event.key !== "Tab" || !modalRef.current) return;
+
+      const focusableElements = getFocusableElements(modalRef.current);
+      if (focusableElements.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+      const activeElement = document.activeElement;
+
+      if (!activeElement || !modalRef.current.contains(activeElement)) {
+        event.preventDefault();
+        firstElement.focus();
+        return;
+      }
+
+      if (event.shiftKey && activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+        return;
+      }
+
+      if (!event.shiftKey && activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.removeEventListener("keydown", handleKeyDown);
+      previouslyFocused?.focus();
+    };
+  }, [expanded]);
 
   return (
     <>
@@ -23,13 +79,14 @@ export function MiniMap({ activeSector }: MiniMapProps) {
           <SystemLabel variant="secondary">{active ? active.label : "Unknown"}</SystemLabel>
         </div>
 
-        <NetworkCanvas activeSector={activeSector} compact />
+        <NetworkCanvasFrame activeSector={activeSector} compact />
 
         <div className="minimap__actions">
           <button
             className="minimap__expand"
             type="button"
             aria-label="Expand network map"
+            ref={expandButtonRef}
             onClick={() => setExpanded(true)}
           >
             <span aria-hidden="true" />
@@ -38,21 +95,23 @@ export function MiniMap({ activeSector }: MiniMapProps) {
       </HudPanel>
 
       {expanded && (
-        <div className="minimap-modal" role="dialog" aria-modal="true" aria-label="Expanded network map">
+        <div className="minimap-modal" role="dialog" aria-modal="true" aria-label="Expanded network map" ref={modalRef}>
           <button
             className="minimap-modal__backdrop"
             type="button"
             aria-label="Close network map"
+            tabIndex={-1}
             onClick={() => setExpanded(false)}
           />
           <div className="minimap-modal__panel">
+            <MiniMapHexBackdrop />
             <div className="minimap-modal__header">
               <SystemLabel>Section Network</SystemLabel>
-              <button type="button" onClick={() => setExpanded(false)}>
+              <button type="button" ref={closeButtonRef} onClick={() => setExpanded(false)}>
                 Close
               </button>
             </div>
-            <NetworkCanvas activeSector={activeSector} />
+            <NetworkCanvasFrame activeSector={activeSector} />
           </div>
         </div>
       )}
@@ -60,28 +119,18 @@ export function MiniMap({ activeSector }: MiniMapProps) {
   );
 }
 
+function NetworkCanvasFrame({ activeSector, compact = false }: MiniMapProps & { compact?: boolean }) {
+  return (
+    <div className={compact ? "minimap__viewport minimap__viewport--compact" : "minimap__viewport minimap__viewport--expanded"}>
+      <NetworkCanvas activeSector={activeSector} compact={compact} />
+    </div>
+  );
+}
+
 function NetworkCanvas({ activeSector, compact = false }: MiniMapProps & { compact?: boolean }) {
   const router = useRouter();
   const nodes = sectors.filter((sector) => sector.id !== "hub");
   const hub = sectors.find((sector) => sector.id === "hub");
-  const substrateRoutes = [
-    "M 8 24 L 24 24 L 39 39",
-    "M 92 24 L 76 24 L 61 39",
-    "M 8 76 L 24 76 L 39 61",
-    "M 92 76 L 76 76 L 61 61",
-    "M 18 50 L 34 50 L 42 58",
-    "M 82 50 L 66 50 L 58 42",
-  ];
-  const substrateStops = [
-    { x: 24, y: 24 },
-    { x: 76, y: 24 },
-    { x: 24, y: 76 },
-    { x: 76, y: 76 },
-    { x: 34, y: 50 },
-    { x: 66, y: 50 },
-    { x: 50, y: 18 },
-    { x: 50, y: 82 },
-  ];
 
   const returnToHub = () => router.push("/");
 
@@ -89,19 +138,9 @@ function NetworkCanvas({ activeSector, compact = false }: MiniMapProps & { compa
     <svg
       className={compact ? "minimap__canvas minimap__canvas--compact" : "minimap__canvas minimap__canvas--expanded"}
       viewBox="0 0 100 100"
+      role="navigation"
       aria-label="Section network map"
     >
-      {!compact && (
-        <g className="minimap__substrate" aria-hidden="true">
-          {substrateRoutes.map((route) => (
-            <path key={route} d={route} />
-          ))}
-          {substrateStops.map((stop) => (
-            <circle key={`${stop.x}-${stop.y}`} cx={stop.x} cy={stop.y} r="0.72" />
-          ))}
-        </g>
-      )}
-
       {hub &&
         connections.map((conn) => {
           const from = sectors.find((s) => s.id === conn.from);
@@ -146,10 +185,10 @@ function NetworkCanvas({ activeSector, compact = false }: MiniMapProps & { compa
             <text
               className="minimap__core-label"
               x={hub.coordinates.x * 100}
-              y={hub.coordinates.y * 100 - 9}
+              y={hub.coordinates.y * 100 + 13}
               textAnchor="middle"
             >
-              Hub
+              Central Hub
             </text>
           )}
         </g>
@@ -173,7 +212,7 @@ function NetworkCanvas({ activeSector, compact = false }: MiniMapProps & { compa
               data-sector={sector.id}
             />
             {!compact && (
-              <text className="minimap__node-label" x={cx} y={cy + 8} textAnchor="middle">
+              <text className="minimap__node-label" x={cx} y={cy + 11} textAnchor="middle">
                 {sector.shortLabel}
               </text>
             )}
@@ -182,4 +221,17 @@ function NetworkCanvas({ activeSector, compact = false }: MiniMapProps & { compa
       })}
     </svg>
   );
+}
+
+function getFocusableElements(root: HTMLElement): Array<HTMLElement | SVGElement> {
+  return Array.from(
+    root.querySelectorAll<HTMLElement | SVGElement>(
+      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    ),
+  ).filter((element) => {
+    if (element.getAttribute("aria-hidden") === "true") return false;
+    if (element instanceof HTMLElement && element.hidden) return false;
+
+    return true;
+  });
 }

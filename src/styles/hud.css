@@ -321,46 +321,42 @@
 
 .minimap__title {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: var(--space-sm);
   min-height: 1rem;
   margin-bottom: 0.2rem;
-  text-align: right;
+  text-align: center;
 }
 
-.minimap__canvas {
-  display: block;
+.minimap__viewport {
+  position: relative;
+  display: grid;
+  place-items: center;
   width: 100%;
   aspect-ratio: 1;
   height: auto;
   max-height: 8rem;
+  isolation: isolate;
   overflow: visible;
 }
 
-.minimap__canvas--expanded {
-  position: relative;
-  z-index: 1;
+.minimap__viewport--expanded {
   width: min(64vw, 36rem);
   max-height: min(54vh, 28rem);
   margin: 0 auto;
 }
 
-.minimap__substrate {
-  opacity: 0.46;
+.minimap__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
-.minimap__substrate path {
-  fill: none;
-  stroke: rgba(var(--rgb-ember), 0.28);
-  stroke-width: 0.42;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
-}
-
-.minimap__substrate circle {
-  fill: rgba(var(--rgb-gold-soft), 0.38);
-  filter: drop-shadow(0 0 4px rgba(var(--rgb-ember), 0.22));
+.minimap__canvas {
+  z-index: 1;
+  display: block;
+  overflow: visible;
 }
 
 .minimap__path {
@@ -526,26 +522,102 @@
   content: "";
   position: absolute;
   inset: 4rem 1.25rem 1rem;
+  z-index: 0;
   pointer-events: none;
 }
 
 .minimap-modal__panel::before {
   background:
-    linear-gradient(90deg, rgba(var(--rgb-slate), 0.12) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(var(--rgb-slate), 0.1) 1px, transparent 1px);
+    linear-gradient(90deg, rgba(var(--rgb-slate), 0.17) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(var(--rgb-slate), 0.15) 1px, transparent 1px);
   background-size:
     4.5rem 4.5rem,
     4.5rem 4.5rem;
-  opacity: 0.24;
+  opacity: 0.35;
 }
 
 .minimap-modal__panel::after {
   background:
-    radial-gradient(circle at 28% 34%, rgba(var(--rgb-gold-soft), 0.24) 0 2px, transparent 2.5px),
-    radial-gradient(circle at 64% 30%, rgba(var(--rgb-gold-soft), 0.2) 0 2px, transparent 2.5px),
-    radial-gradient(circle at 42% 68%, rgba(var(--rgb-ember), 0.2) 0 2px, transparent 2.5px),
-    radial-gradient(circle at 73% 66%, rgba(var(--rgb-ember), 0.18) 0 2px, transparent 2.5px);
-  opacity: 0.68;
+    radial-gradient(circle at 18% 20%, rgba(var(--rgb-gold-soft), 0.16) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 86% 17%, rgba(var(--rgb-ember), 0.14) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 19% 83%, rgba(var(--rgb-gold-soft), 0.14) 0 1.5px, transparent 2px);
+  opacity: 0.42;
+}
+
+.minimap-hex-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.minimap-hex-backdrop__cell,
+.minimap-hex-backdrop__terminal polyline {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.minimap-hex-backdrop__cell {
+  stroke: rgba(var(--rgb-gold-soft), 0.6);
+  stroke-linejoin: round;
+}
+
+.minimap-hex-backdrop__cell--primary {
+  stroke: rgba(var(--rgb-gold-soft), 0.82);
+  stroke-width: 0.72;
+  opacity: calc(var(--minimap-hex-strength, 0.72) * 0.54);
+  filter: drop-shadow(0 0 6px rgba(var(--rgb-neon-gold), 0.12));
+  animation: minimap-hex-breathe 7.5s ease-in-out infinite;
+}
+
+.minimap-hex-backdrop__cell--secondary {
+  stroke-width: 0.56;
+  opacity: calc(var(--minimap-hex-strength, 0.52) * 0.42);
+}
+
+.minimap-hex-backdrop__cell--peripheral {
+  stroke-width: 0.46;
+  opacity: calc(var(--minimap-hex-strength, 0.32) * 0.32);
+}
+
+.minimap-hex-backdrop__terminal {
+  opacity: calc(var(--minimap-hex-strength, 0.48) * 0.54);
+}
+
+.minimap-hex-backdrop__terminal polyline {
+  stroke: rgba(var(--rgb-gold-soft), 0.54);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 0.5;
+}
+
+.minimap-hex-backdrop__terminal circle {
+  fill: rgba(var(--rgb-black), 0.62);
+  stroke: rgba(var(--rgb-gold-soft), 0.58);
+  stroke-width: 0.48;
+  vector-effect: non-scaling-stroke;
+}
+
+.minimap-hex-backdrop__terminal--primary polyline,
+.minimap-hex-backdrop__terminal--primary circle {
+  stroke: rgba(var(--rgb-neon-gold), 0.76);
+}
+
+.minimap-hex-backdrop__terminal--peripheral {
+  opacity: calc(var(--minimap-hex-strength, 0.36) * 0.42);
+}
+
+.minimap-hex-backdrop__terminal--peripheral polyline,
+.minimap-hex-backdrop__terminal--peripheral circle {
+  stroke: rgba(var(--rgb-gold-soft), 0.42);
+}
+
+.minimap-modal__panel .minimap__viewport {
+  position: relative;
+  z-index: 1;
 }
 
 .minimap-modal__header {
@@ -1114,6 +1186,23 @@
   text-shadow: var(--glow-accent);
 }
 
+@keyframes minimap-hex-breathe {
+  0%,
+  100% {
+    opacity: calc(var(--minimap-hex-strength, 0.72) * 0.44);
+  }
+
+  48% {
+    opacity: calc(var(--minimap-hex-strength, 0.72) * 0.62);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .minimap-hex-backdrop__cell--primary {
+    animation: none;
+  }
+}
+
 @media (max-width: 720px) {
   :root {
     --header-height: auto;
@@ -1207,7 +1296,7 @@
     margin-bottom: 0;
   }
 
-  .minimap__canvas {
+  .minimap__viewport {
     width: min(7rem, 28vw);
     max-height: 3rem;
   }
