@@ -84,6 +84,13 @@ export function SystemShell({ children }: SystemShellProps) {
           </div>
         </dl>
 
+        {isHub && (
+          <div className="system-shell__hub-id" aria-hidden="true">
+            <span>SF</span>
+            <strong>Central Hub</strong>
+          </div>
+        )}
+
         {!isHub && <StatusIndicator status="active" label="Section active" />}
       </header>
 

@@ -73,7 +73,10 @@ export default function CentralHubPage() {
       </aside>
 
       <div className="central-hub__bottom-bar" aria-hidden="true" data-system-load>
-        <span />
+        <span className="central-hub__bottom-anchor">
+          <span className="central-hub__bottom-anchor-mark">N</span>
+          <span>Command Centre</span>
+        </span>
         <span>SF // Operations System v2.0.</span>
         <span>© 2026 Spencer Fisher Interface</span>
       </div>

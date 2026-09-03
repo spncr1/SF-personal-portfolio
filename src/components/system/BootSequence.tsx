@@ -23,6 +23,7 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
   const readyRef = useRef(false);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const [statusLabel, setStatusLabel] = useState("Calibrating...");
 
   useEffect(() => {
     completeRef.current = onComplete;
@@ -146,13 +147,17 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
         { opacity: 1, x: 0, stagger: 0.28, duration: 0.34 },
         "-=0.08",
       )
+      .call(() => setStatusLabel("Calibrating..."))
+      .to(q(".boot-sequence__status"), { opacity: 1, duration: 0.18 })
       .fromTo(q(".boot-sequence__meter-fill"), { scaleX: 0 }, { scaleX: 1, duration: 2.15, ease: "power1.inOut" }, "-=0.02")
       .to(meterProgress, { value: 100, duration: 2.15, ease: "power1.inOut", onUpdate: updateMeterPercent }, "<")
+      .to(q(".boot-sequence__status"), { opacity: 0, duration: 0.16 })
       .to(q(".boot-sequence__vault-lock"), { opacity: 0, scale: 0.82, duration: 0.22 }, "-=0.2")
       .to(q(".boot-sequence__vault-door--left"), { xPercent: -36, opacity: 0.48, duration: 0.42, ease: "power3.inOut" }, "-=0.08")
       .to(q(".boot-sequence__vault-door--right"), { xPercent: 36, opacity: 0.48, duration: 0.42, ease: "power3.inOut" }, "<")
       .to(q(".boot-sequence__ring"), { scale: 1.05, duration: 0.22, yoyo: true, repeat: 1, ease: "power2.inOut" }, "-=0.08")
       .to(q(".boot-sequence__monogram"), { scale: 1.07, duration: 0.18, yoyo: true, repeat: 1, ease: "power2.inOut" }, "<")
+      .call(() => setStatusLabel("Click or press any key to enter"))
       .to(q(".boot-sequence__status"), { opacity: 1, duration: 0.24 })
       .to(root, { opacity: 1, duration: 0.22 });
 
@@ -211,7 +216,7 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
           </div>
 
           <p className="boot-sequence__status" aria-live="polite">
-            {isReady ? "Click or press any key to enter" : "Initializing secure interface"}
+            {statusLabel}
           </p>
         </div>
       </div>
