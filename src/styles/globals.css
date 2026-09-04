@@ -999,7 +999,7 @@ ul {
   text-shadow: var(--glow-accent-strong);
 }
 
-.sector-frame__masthead span {
+.sector-frame__masthead > span:not(.status-indicator) {
   flex: 0 0 auto;
   color: var(--color-secondary);
   font-family: var(--font-mono);
@@ -1062,6 +1062,487 @@ ul {
   height: 0.35rem;
   background: var(--color-accent);
   box-shadow: var(--glow-accent);
+}
+
+.capabilities-matrix {
+  display: grid;
+  gap: var(--space-md);
+  width: min(100%, 68rem);
+}
+
+.capabilities-matrix__overview {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.capabilities-matrix__overview strong {
+  font-size: clamp(2rem, 4vw, 3.6rem);
+}
+
+.capabilities-matrix__overview p {
+  max-width: 34rem;
+}
+
+.capabilities-matrix__system-diagram {
+  position: absolute;
+  top: 50%;
+  right: var(--space-lg);
+  width: clamp(9rem, 15vw, 13rem);
+  transform: translateY(-50%);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.capabilities-matrix__system-diagram-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.capabilities-matrix__system-diagram-node {
+  fill: none;
+  stroke: rgba(var(--rgb-gold-soft), 0.68);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 7px rgba(var(--rgb-neon-ember), 0.24));
+}
+
+.capabilities-matrix__system-diagram-node--accent {
+  stroke: rgba(var(--rgb-neon-ember), 0.78);
+}
+
+.capabilities-matrix__system-diagram-link {
+  fill: none;
+  stroke: rgba(var(--rgb-gold-soft), 0.4);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+@media (max-width: 900px) {
+  .capabilities-matrix__system-diagram {
+    display: none;
+  }
+}
+
+.capabilities-matrix__nodes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.capabilities-matrix__nodes .hud-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.system-shell[data-boot="complete"] .capabilities-matrix__overview,
+.system-shell[data-boot="complete"] .capabilities-matrix__nodes .hud-panel {
+  animation-name: hub-system-rise;
+  animation-duration: 900ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: both;
+}
+
+.system-shell[data-boot="complete"] .capabilities-matrix__overview {
+  animation-delay: 120ms;
+}
+
+.system-shell[data-boot="complete"] .capabilities-matrix__nodes .hud-panel:nth-child(1) {
+  animation-delay: 260ms;
+}
+
+.system-shell[data-boot="complete"] .capabilities-matrix__nodes .hud-panel:nth-child(2) {
+  animation-delay: 380ms;
+}
+
+.system-shell[data-boot="complete"] .capabilities-matrix__nodes .hud-panel:nth-child(3) {
+  animation-delay: 500ms;
+}
+
+.system-shell[data-boot="complete"] .capabilities-matrix__nodes .hud-panel:nth-child(4) {
+  animation-delay: 620ms;
+}
+
+.capabilities-matrix__group-title {
+  margin: 0;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.capabilities-matrix__entry {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.capabilities-matrix__technologies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: var(--space-xs);
+}
+
+.capabilities-matrix__tech {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid rgba(var(--rgb-gold-soft), 0.18);
+  padding: 0.35rem 0.5rem;
+  background: rgba(var(--rgb-gold-soft), 0.04);
+  color: var(--color-text);
+  cursor: default;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    box-shadow 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
+}
+
+.capabilities-matrix__tech-icon {
+  flex: 0 0 auto;
+  width: 0.95rem;
+  height: 0.95rem;
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+  transition: stroke 150ms ease;
+}
+
+.capabilities-matrix__tech:hover {
+  border-color: rgba(var(--rgb-neon-ember), 0.68);
+  background:
+    linear-gradient(90deg, rgba(var(--rgb-neon-ember), 0.16), transparent 54%),
+    rgba(var(--rgb-ember), 0.08);
+  color: var(--color-accent);
+  box-shadow:
+    inset 0 0 18px rgba(var(--rgb-ember), 0.08),
+    0 0 14px rgba(var(--rgb-neon-ember), 0.16);
+  transform: translateY(-1px);
+}
+
+.capabilities-matrix__tech:hover .capabilities-matrix__tech-icon {
+  stroke: var(--color-accent);
+}
+
+.capabilities-matrix__entry p {
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
+@media (max-width: 980px) {
+  .capabilities-matrix__nodes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .capabilities-matrix__nodes {
+    grid-template-columns: 1fr;
+  }
+}
+
+.capabilities-matrix__entry p {
+  margin-top: 0;
+}
+
+.capabilities-matrix__links {
+  display: grid;
+  gap: var(--space-sm);
+  margin-top: auto;
+  border-top: 1px solid rgba(var(--rgb-ember), 0.2);
+  padding-top: var(--space-sm);
+}
+
+.capabilities-matrix__links div {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.capabilities-matrix__links dt {
+  color: var(--color-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.capabilities-matrix__links dd {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.capabilities-matrix__applied {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+
+.communications-console {
+  display: grid;
+  align-content: start;
+  gap: clamp(1.2rem, 2.5vw, 2rem);
+}
+
+.communications-console__grid {
+  display: grid;
+  grid-template-areas:
+    "relay channels"
+    "signal channels";
+  grid-template-columns: minmax(0, 1fr) minmax(24rem, 0.8fr);
+  grid-template-rows: auto auto;
+  gap: clamp(1rem, 2.2vw, 1.8rem);
+  align-items: start;
+  width: 100%;
+}
+
+.communications-console__relay {
+  grid-area: relay;
+  min-height: clamp(18rem, 32vh, 24rem);
+  overflow: hidden;
+}
+
+.communications-console__signal {
+  grid-area: signal;
+  align-self: start;
+  width: 100%;
+  padding-top: var(--space-xs);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.communications-console__relay strong {
+  font-size: clamp(2rem, 4vw, 3.6rem);
+}
+
+.communications-console__channels {
+  grid-area: channels;
+  align-self: start;
+  min-height: 0;
+  margin: 0;
+}
+
+.communications-console__channel-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.communications-console__channel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.95rem;
+  min-height: 3.6rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(var(--rgb-ember), 0.22);
+  background:
+    linear-gradient(90deg, rgba(var(--rgb-neon-ember), 0.09), transparent 42%),
+    rgba(var(--rgb-charcoal-deep), 0.32);
+  color: var(--color-text-muted);
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    box-shadow 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
+}
+
+.communications-console__channel-icon {
+  flex: 0 0 auto;
+  width: 1.55rem;
+  height: 1.55rem;
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.65;
+  filter: drop-shadow(0 0 8px rgba(var(--rgb-neon-ember), 0.26));
+  transition:
+    filter 150ms ease,
+    stroke 150ms ease,
+    transform 150ms ease;
+}
+
+.communications-console__channel strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--color-accent);
+  font-family: var(--font-hud);
+  font-size: clamp(0.86rem, 1.1vw, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+.communications-console__channel:hover,
+.communications-console__channel:focus-visible {
+  border-color: rgba(var(--rgb-neon-ember), 0.68);
+  background:
+    linear-gradient(90deg, rgba(var(--rgb-neon-ember), 0.16), transparent 54%),
+    rgba(var(--rgb-ember), 0.08);
+  color: var(--color-accent);
+  box-shadow:
+    inset 0 0 24px rgba(var(--rgb-ember), 0.08),
+    0 0 18px rgba(var(--rgb-neon-ember), 0.16);
+  transform: translateX(0.12rem);
+}
+
+.communications-console__channel:hover .communications-console__channel-icon,
+.communications-console__channel:focus-visible .communications-console__channel-icon {
+  stroke: rgba(var(--rgb-neon-ember), 0.92);
+  filter:
+    drop-shadow(0 0 8px rgba(var(--rgb-neon-ember), 0.46))
+    drop-shadow(0 0 18px rgba(var(--rgb-ember), 0.22));
+  transform: scale(1.06);
+}
+
+.communications-console__signal-svg {
+  display: block;
+  width: 100%;
+  height: 7rem;
+  overflow: visible;
+}
+
+.communications-console__signal-baseline {
+  stroke: rgba(var(--rgb-slate), 0.3);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.communications-console__signal-bar {
+  fill: rgba(var(--rgb-gold-soft), 0.55);
+  transform-box: fill-box;
+  transform-origin: center;
+  filter: drop-shadow(0 0 5px rgba(var(--rgb-neon-ember), 0.24));
+  animation: communications-chatter-pulse 2.4s ease-in-out infinite;
+}
+
+.communications-console__signal-bar:nth-child(odd) {
+  fill: rgba(var(--rgb-neon-ember), 0.62);
+}
+
+@keyframes communications-chatter-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scaleY(0.82);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+.system-shell[data-boot="complete"] .communications-console__masthead,
+.system-shell[data-boot="complete"] .communications-console__relay,
+.system-shell[data-boot="complete"] .communications-console__signal,
+.system-shell[data-boot="complete"] .communications-console__channels,
+.system-shell[data-boot="complete"] .communications-console__channel-list li {
+  animation-fill-mode: both;
+}
+
+.system-shell[data-boot="complete"] .communications-console__masthead,
+.system-shell[data-boot="complete"] .communications-console__relay,
+.system-shell[data-boot="complete"] .communications-console__signal,
+.system-shell[data-boot="complete"] .communications-console__channels {
+  animation-name: hub-system-rise;
+  animation-duration: 900ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.system-shell[data-boot="complete"] .communications-console__masthead {
+  animation-delay: 120ms;
+}
+
+.system-shell[data-boot="complete"] .communications-console__relay {
+  animation-delay: 260ms;
+}
+
+.system-shell[data-boot="complete"] .communications-console__signal {
+  animation-delay: 440ms;
+}
+
+.system-shell[data-boot="complete"] .communications-console__channels {
+  animation-delay: 560ms;
+}
+
+.system-shell[data-boot="complete"] .communications-console__channel-list li {
+  animation-name: hub-system-resolve;
+  animation-duration: 560ms;
+  animation-timing-function: ease-out;
+}
+
+.system-shell[data-boot="complete"] .communications-console__channel-list li:nth-child(1) {
+  animation-delay: 720ms;
+}
+
+.system-shell[data-boot="complete"] .communications-console__channel-list li:nth-child(2) {
+  animation-delay: 820ms;
+}
+
+.system-shell[data-boot="complete"] .communications-console__channel-list li:nth-child(3) {
+  animation-delay: 920ms;
+}
+
+.system-shell[data-boot="complete"] .communications-console__channel-list li:nth-child(4) {
+  animation-delay: 1.02s;
+}
+
+.system-shell[data-boot="complete"] .communications-console__channel-list li:nth-child(5) {
+  animation-delay: 1.12s;
+}
+
+@media (max-width: 1120px) {
+  .communications-console__grid {
+    grid-template-areas:
+      "relay relay"
+      "signal channels";
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.82fr);
+    grid-template-rows: auto auto;
+    align-items: start;
+  }
+
+  .communications-console__relay {
+    min-height: clamp(17rem, 30vh, 22rem);
+  }
+
+  .communications-console__channels {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 860px) {
+  .communications-console__grid {
+    grid-template-areas:
+      "relay"
+      "signal"
+      "channels";
+    grid-template-columns: 1fr;
+  }
+
+  .communications-console__channel-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 720px) {
@@ -1159,6 +1640,22 @@ ul {
 
   .sector-frame__grid {
     grid-template-columns: 1fr;
+  }
+
+  .communications-console__grid {
+    grid-template-areas:
+      "relay"
+      "channels";
+    grid-template-columns: 1fr;
+  }
+
+  .communications-console__channel-list {
+    grid-template-columns: 1fr;
+  }
+
+  .communications-console__signal {
+    justify-self: center;
+    width: min(100%, 18rem);
   }
 }
 
@@ -1977,6 +2474,7 @@ ul {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .communications-console__signal-bar,
   .central-hub__mapbox-hex-layer,
   .central-hub__mapbox-hex-cell,
   .central-hub__mapbox-hex-cell--primary {

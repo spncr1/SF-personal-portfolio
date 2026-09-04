@@ -19,7 +19,6 @@ export function NetworkMap() {
 
   const updateActiveSector = (sectorId: SectorId | null) => {
     setActiveSector(sectorId);
-    window.dispatchEvent(new CustomEvent("sf-ops-section-preview", { detail: sectorId }));
   };
 
   return (
