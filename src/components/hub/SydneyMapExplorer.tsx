@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { type CSSProperties, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import mapboxgl from "mapbox-gl";
 import { hexPoints } from "@/lib/networkGeometry";
+import { HudModal } from "@/components/ui/HudModal";
 
 const sydneyLngLat: [number, number] = [151.2093, -33.8688];
 
@@ -232,29 +232,10 @@ interface SydneyMapExplorerProps {
 export function SydneyMapExplorer({ accessToken }: SydneyMapExplorerProps) {
   const [expanded, setExpanded] = useState(false);
   const [mapFailed, setMapFailed] = useState(false);
-  const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapBeaconRef = useRef<HTMLSpanElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapHexesHiddenRef = useRef(false);
-
-  useEffect(() => {
-    const portalSync = window.setTimeout(() => setPortalRoot(document.body), 0);
-
-    return () => window.clearTimeout(portalSync);
-  }, []);
-
-  useEffect(() => {
-    if (!expanded) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setExpanded(false);
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [expanded]);
 
   useEffect(() => {
     if (!expanded || !accessToken || mapFailed || !mapContainerRef.current || mapRef.current) return;
@@ -406,79 +387,69 @@ export function SydneyMapExplorer({ accessToken }: SydneyMapExplorerProps) {
         <span className="central-hub__map-beacon" aria-hidden="true" />
       </button>
 
-      {expanded && portalRoot
-        ? createPortal(
-        <div className="central-hub__map-modal" role="dialog" aria-modal="true" aria-label="Interactive Sydney map">
-          <button className="central-hub__map-modal-backdrop" type="button" aria-label="Close map" onClick={() => setExpanded(false)} />
-
-          <div className="central-hub__map-modal-panel">
-            <div className="central-hub__map-modal-header">
-              <strong>Spencer&apos;s Geographic Location</strong>
-              <button type="button" onClick={() => setExpanded(false)}>
-                Close
-              </button>
-            </div>
-
-            {accessToken && !mapFailed ? (
-              <div className="central-hub__mapbox-canvas" ref={mapContainerRef}>
-                <svg className="central-hub__mapbox-hex-overlay" viewBox="0 0 100 50" preserveAspectRatio="none" aria-hidden="true">
-                  <defs>
-                    <linearGradient id="mapbox-left-hex-fade" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="white" stopOpacity="0.5" />
-                      <stop offset="12%" stopColor="white" stopOpacity="1" />
-                      <stop offset="74%" stopColor="white" stopOpacity="0.72" />
-                      <stop offset="100%" stopColor="white" stopOpacity="0" />
-                    </linearGradient>
-                    <linearGradient id="mapbox-right-hex-fade" x1="100%" y1="0%" x2="0%" y2="0%">
-                      <stop offset="0%" stopColor="white" stopOpacity="0.5" />
-                      <stop offset="12%" stopColor="white" stopOpacity="1" />
-                      <stop offset="74%" stopColor="white" stopOpacity="0.72" />
-                      <stop offset="100%" stopColor="white" stopOpacity="0" />
-                    </linearGradient>
-                    <mask id="mapbox-left-hex-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="28" height="50">
-                      <rect x="0" y="0" width="28" height="50" fill="url(#mapbox-left-hex-fade)" />
-                    </mask>
-                    <mask id="mapbox-right-hex-mask" maskUnits="userSpaceOnUse" x="72" y="0" width="28" height="50">
-                      <rect x="72" y="0" width="28" height="50" fill="url(#mapbox-right-hex-fade)" />
-                    </mask>
-                  </defs>
-                  <g
-                    className="central-hub__mapbox-hex-layer central-hub__mapbox-hex-layer--backplane central-hub__mapbox-hex-layer--left"
-                    mask="url(#mapbox-left-hex-mask)"
-                  >
-                    {renderGlobeHexCells("left", "backplane")}
-                  </g>
-                  <g className="central-hub__mapbox-hex-layer central-hub__mapbox-hex-layer--left" mask="url(#mapbox-left-hex-mask)">
-                    {renderGlobeHexCells("left", "foreground")}
-                  </g>
-                  <g
-                    className="central-hub__mapbox-hex-layer central-hub__mapbox-hex-layer--backplane central-hub__mapbox-hex-layer--right"
-                    mask="url(#mapbox-right-hex-mask)"
-                  >
-                    {renderGlobeHexCells("right", "backplane")}
-                  </g>
-                  <g className="central-hub__mapbox-hex-layer central-hub__mapbox-hex-layer--right" mask="url(#mapbox-right-hex-mask)">
-                    {renderGlobeHexCells("right", "foreground")}
-                  </g>
-                </svg>
-                <span className="central-hub__mapbox-beacon" ref={mapBeaconRef} aria-hidden="true" />
-              </div>
-            ) : (
-              <div className="central-hub__mapbox-fallback">
-                <Image
-                  src="/api/location/sydney-map"
-                  alt="World map with Sydney, Australia marked as Spencer Fisher's location"
-                  width={1280}
-                  height={640}
-                  unoptimized
-                />
-              </div>
-            )}
+      <HudModal
+        open={expanded}
+        title="Spencer's Geographic Location"
+        ariaLabel="Interactive Sydney map"
+        onClose={() => setExpanded(false)}
+        size="wide"
+      >
+        {accessToken && !mapFailed ? (
+          <div className="central-hub__mapbox-canvas" ref={mapContainerRef}>
+            <svg className="central-hub__mapbox-hex-overlay" viewBox="0 0 100 50" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="mapbox-left-hex-fade" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="white" stopOpacity="0.5" />
+                  <stop offset="12%" stopColor="white" stopOpacity="1" />
+                  <stop offset="74%" stopColor="white" stopOpacity="0.72" />
+                  <stop offset="100%" stopColor="white" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="mapbox-right-hex-fade" x1="100%" y1="0%" x2="0%" y2="0%">
+                  <stop offset="0%" stopColor="white" stopOpacity="0.5" />
+                  <stop offset="12%" stopColor="white" stopOpacity="1" />
+                  <stop offset="74%" stopColor="white" stopOpacity="0.72" />
+                  <stop offset="100%" stopColor="white" stopOpacity="0" />
+                </linearGradient>
+                <mask id="mapbox-left-hex-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="28" height="50">
+                  <rect x="0" y="0" width="28" height="50" fill="url(#mapbox-left-hex-fade)" />
+                </mask>
+                <mask id="mapbox-right-hex-mask" maskUnits="userSpaceOnUse" x="72" y="0" width="28" height="50">
+                  <rect x="72" y="0" width="28" height="50" fill="url(#mapbox-right-hex-fade)" />
+                </mask>
+              </defs>
+              <g
+                className="central-hub__mapbox-hex-layer central-hub__mapbox-hex-layer--backplane central-hub__mapbox-hex-layer--left"
+                mask="url(#mapbox-left-hex-mask)"
+              >
+                {renderGlobeHexCells("left", "backplane")}
+              </g>
+              <g className="central-hub__mapbox-hex-layer central-hub__mapbox-hex-layer--left" mask="url(#mapbox-left-hex-mask)">
+                {renderGlobeHexCells("left", "foreground")}
+              </g>
+              <g
+                className="central-hub__mapbox-hex-layer central-hub__mapbox-hex-layer--backplane central-hub__mapbox-hex-layer--right"
+                mask="url(#mapbox-right-hex-mask)"
+              >
+                {renderGlobeHexCells("right", "backplane")}
+              </g>
+              <g className="central-hub__mapbox-hex-layer central-hub__mapbox-hex-layer--right" mask="url(#mapbox-right-hex-mask)">
+                {renderGlobeHexCells("right", "foreground")}
+              </g>
+            </svg>
+            <span className="central-hub__mapbox-beacon" ref={mapBeaconRef} aria-hidden="true" />
           </div>
-        </div>,
-          portalRoot,
-        )
-        : null}
+        ) : (
+          <div className="central-hub__mapbox-fallback">
+            <Image
+              src="/api/location/sydney-map"
+              alt="World map with Sydney, Australia marked as Spencer Fisher's location"
+              width={1280}
+              height={640}
+              unoptimized
+            />
+          </div>
+        )}
+      </HudModal>
     </>
   );
 }
