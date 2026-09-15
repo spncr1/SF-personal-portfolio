@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CountUpValue } from "@/components/ui/CountUpValue";
+import { SiteIcon } from "@/components/ui/SiteIcon";
 import type { GitHubSummary } from "@/types/github";
 
 type LoadState = "loading" | "ready" | "error";
@@ -64,7 +65,7 @@ export function GitHubIntel() {
     return (
       <section className="central-hub__github-card" aria-label="GitHub intelligence">
         <div className="central-hub__github-header">
-          <span>GitHub Live</span>
+          <span><SiteIcon name="code" />GitHub Live</span>
           <strong>Syncing</strong>
         </div>
         <p className="central-hub__github-message">Repository telemetry access link in progress.</p>
@@ -76,7 +77,7 @@ export function GitHubIntel() {
     return (
       <section className="central-hub__github-card" aria-label="GitHub intelligence">
         <div className="central-hub__github-header">
-          <span>GitHub Live</span>
+          <span><SiteIcon name="code" />GitHub Live</span>
           <strong>Offline</strong>
         </div>
         <p className="central-hub__github-message">GitHub telemetry is unavailable right now.</p>
@@ -89,9 +90,10 @@ export function GitHubIntel() {
   return (
     <section className="central-hub__github-card" aria-label="GitHub intelligence">
       <div className="central-hub__github-header">
-        <span>GitHub Live</span>
+        <span><SiteIcon name="code" />GitHub Live</span>
         <a href={summary.profileUrl} target="_blank" rel="noreferrer">
           @{summary.username}
+          <SiteIcon name="open-in-new" />
         </a>
       </div>
 
@@ -130,6 +132,7 @@ export function GitHubIntel() {
         <a className="central-hub__repo-signal" href={summary.latestRepo.url} target="_blank" rel="noreferrer">
           <span>Recently Updated</span>
           <strong>{summary.latestRepo.name}</strong>
+          <SiteIcon name="open-in-new" />
         </a>
       )}
 

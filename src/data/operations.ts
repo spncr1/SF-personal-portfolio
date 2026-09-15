@@ -1,40 +1,41 @@
-export interface OperationsData {
-  building: string[];
-  learning: string[];
-  activeProjects: string[];
-  universityWork: string[];
-  phases: string[];
-  milestones: string[];
-  objectives: string[];
-  currentRoles: string[];
-  implementationNotes: string[];
+import type { OperationRepositoryId } from "@/types/github";
+
+export interface ActiveOperation {
+  id: OperationRepositoryId;
+  code: string;
+  name: string;
+  status: string;
+  phase: string;
+  currentThinking: string;
+  screenshot: string | null;
 }
 
-export const operations: OperationsData = {
-  building: [
-    "Atmos FC - football fan sentiment analysis platform, Apr 2026 - Present",
-    "Nexa - student workload management dashboard, Dec 2025 - Present",
-  ],
-  learning: [],
-  activeProjects: ["Atmos FC", "Nexa"],
-  universityWork: [
-    "Bachelor of Engineering (Honors), Software Engineering, UTS - graduating 2026",
-  ],
-  phases: [],
-  milestones: [
-    "Atmos FC integrates Football-Data.org and YouTube Data APIs for fixture, match event, and fan discussion data.",
-    "Nexa includes 5+ REST API endpoints for authentication and persistent multi-user data storage.",
-    "Nexa tested with 6-8 early users and improved using feedback on workflows, usability, and user experience.",
-  ],
-  objectives: [
-    "Contribute to backend systems, API development, and practical software projects while continuing to develop production-level engineering skills.",
-  ],
-  currentRoles: [
-    "IT Support and Administration, Daluch Global Recruitment Pty Ltd - Dec 2021 - Present",
-    "Online Customer Service Consultant, Endeavour Group - Oct 2025 - Present",
-  ],
-  implementationNotes: [
-    "Atmos FC: Python FastAPI backend with Football-Data.org and YouTube Data API integrations.",
-    "Nexa: Node.js, Express, PostgreSQL, REST API endpoints, authentication, and persistent multi-user storage.",
-  ],
-};
+export const activeOperations: ActiveOperation[] = [
+  {
+    id: "atmos-fc",
+    code: "OPS-01",
+    name: "Atmos FC",
+    status: "In progress",
+    phase: "Refining fixture intelligence and supporter reaction analysis.",
+    currentThinking: "How can match context make supporter sentiment easier to trust at a glance?",
+    screenshot: "/images/projects/atmos-fc/match-analysis.png",
+  },
+  {
+    id: "nexa",
+    code: "OPS-02",
+    name: "Nexa",
+    status: "In progress",
+    phase: "Developing persistent, authenticated student workload workflows.",
+    currentThinking: "Keeping complex study planning useful without making the interface feel heavy.",
+    screenshot: "/images/projects/nexa/dashboard.png",
+  },
+  {
+    id: "portfolio",
+    code: "OPS-03",
+    name: "Portfolio",
+    status: "In progress",
+    phase: "Building the unreleased operations and project record systems.",
+    currentThinking: "Finding the point where motion adds life without distracting from the work.",
+    screenshot: null,
+  },
+];

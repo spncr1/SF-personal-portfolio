@@ -107,7 +107,7 @@ export function PersonnelIdentityGate({ portrait, onComplete }: PersonnelIdentit
       ref={rootRef}
       role="dialog"
       aria-modal="true"
-      aria-label="Personnel identity verification"
+      aria-label="Personnel Record identity verification"
       tabIndex={-1}
     >
       <div className="personnel-gate__ambient" aria-hidden="true">

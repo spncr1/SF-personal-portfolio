@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { HudPanel } from "@/components/ui/HudPanel";
+import { SiteIcon, type SiteIconName } from "@/components/ui/SiteIcon";
 import { SystemLabel } from "@/components/ui/SystemLabel";
 
 export const metadata: Metadata = {
-  title: "Communications | Spencer Fisher",
+  title: "Contact | Spencer Fisher",
 };
 
 const channels = [
@@ -77,6 +78,7 @@ export default function CommunicationsPage() {
                 >
                   <ChannelIcon type={channel.id} />
                   <strong>{channel.value}</strong>
+                  {channel.external && <SiteIcon className="communications-console__external-icon" name="open-in-new" />}
                 </a>
               </li>
             ))}
@@ -125,42 +127,14 @@ function RadioChatter() {
 }
 
 function ChannelIcon({ type }: { type: (typeof channels)[number]["id"] }) {
-  return (
-    <svg className="communications-console__channel-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      {type === "email" && (
-        <>
-          <path d="M4.5 7.25h15v9.5h-15z" />
-          <path d="m5 8 7 5 7-5" />
-        </>
-      )}
-      {type === "linkedin" && (
-        <>
-          <path d="M5.5 10v8" />
-          <path d="M5.5 6.5v.1" />
-          <path d="M10.5 18v-8" />
-          <path d="M10.5 13.75c0-2.25 1.45-3.75 3.55-3.75 2.2 0 3.45 1.4 3.45 3.85V18" />
-        </>
-      )}
-      {type === "phone" && (
-        <>
-          <path d="M7.2 4.75 10 8.2l-1.65 1.65a10.8 10.8 0 0 0 5.8 5.8L15.8 14l3.45 2.8-.55 2.15c-.18.7-.85 1.16-1.56 1.05C10.3 18.95 5.05 13.7 4 6.86c-.11-.71.35-1.38 1.05-1.56z" />
-        </>
-      )}
-      {type === "github" && (
-        <>
-          <path d="M9 18.5c-3.2 1-3.2-1.55-4.5-2" />
-          <path d="M15 21v-3.1c0-.9-.3-1.5-.8-1.8 2.7-.3 5.3-1.3 5.3-5.8 0-1.3-.45-2.3-1.2-3.15.1-.3.5-1.55-.15-3.15 0 0-1-.32-3.15 1.2a10.4 10.4 0 0 0-5.7 0C7.15 3.68 6.15 4 6.15 4c-.65 1.6-.25 2.85-.15 3.15a4.55 4.55 0 0 0-1.2 3.15c0 4.45 2.6 5.5 5.3 5.8-.35.3-.65.85-.75 1.55V21" />
-        </>
-      )}
-      {type === "resume" && (
-        <>
-          <path d="M7 3.75h7l3 3v13.5H7z" />
-          <path d="M14 3.75V7h3" />
-          <path d="M9.5 11h5" />
-          <path d="M9.5 14h5" />
-          <path d="M9.5 17h3" />
-        </>
-      )}
-    </svg>
-  );
+  const suppliedIcons: Partial<Record<(typeof channels)[number]["id"], SiteIconName>> = {
+    email: "mail",
+    phone: "call",
+    linkedin: "linkedin",
+    github: "github",
+    resume: "description",
+  };
+  const suppliedIcon = suppliedIcons[type];
+
+  return <SiteIcon className="communications-console__channel-icon" name={suppliedIcon ?? "code"} />;
 }

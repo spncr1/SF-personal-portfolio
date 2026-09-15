@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { SiteIcon } from "./SiteIcon";
 
 interface HudModalProps {
   open: boolean;
@@ -119,6 +120,7 @@ export function HudModal({
         <div className="hud-modal__header">
           <strong>{title}</strong>
           <button ref={closeButtonRef} type="button" onClick={onClose}>
+            <SiteIcon name="close" />
             Close
           </button>
         </div>

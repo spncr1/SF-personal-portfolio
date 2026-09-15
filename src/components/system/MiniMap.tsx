@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { connections, sectors } from "@/data/navigation";
 import { HudPanel } from "@/components/ui/HudPanel";
 import { SystemLabel } from "@/components/ui/SystemLabel";
+import { SiteIcon } from "@/components/ui/SiteIcon";
 import { MiniMapHexBackdrop } from "./MiniMapHexBackdrop";
 import { getHexBoundaryPoint, hexPoints } from "@/lib/networkGeometry";
 
@@ -108,6 +109,7 @@ export function MiniMap({ activeSector }: MiniMapProps) {
             <div className="minimap-modal__header">
               <SystemLabel>Section Network</SystemLabel>
               <button type="button" ref={closeButtonRef} onClick={() => setExpanded(false)}>
+                <SiteIcon name="close" />
                 Close
               </button>
             </div>

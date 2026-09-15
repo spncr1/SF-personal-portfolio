@@ -327,6 +327,66 @@
   animation: none;
 }
 
+.record-reveal-emblem {
+  display: block;
+  width: min(100%, 15rem);
+  aspect-ratio: 1;
+  overflow: visible;
+  color: var(--color-accent);
+  filter: drop-shadow(0 0 12px rgba(var(--rgb-neon-gold), 0.1));
+}
+
+.record-reveal-emblem__guide,
+.record-reveal-emblem__ring,
+.record-reveal-emblem__hex {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.record-reveal-emblem__guide {
+  stroke: rgba(var(--rgb-ember), 0.2);
+  stroke-width: var(--line-thin);
+  stroke-dasharray: 1.2 4.4;
+}
+
+.record-reveal-emblem__guide--inner {
+  stroke: rgba(var(--rgb-gold-soft), 0.13);
+  stroke-dasharray: none;
+}
+
+.record-reveal-emblem__ring {
+  stroke: var(--color-accent-hot);
+  stroke-width: 1.45;
+  stroke-linecap: round;
+  filter:
+    drop-shadow(0 0 3px rgba(var(--rgb-neon-gold), 0.66))
+    drop-shadow(0 0 10px rgba(var(--rgb-neon-ember), 0.24));
+}
+
+.record-reveal-emblem__hex--outer {
+  stroke: rgba(var(--rgb-gold-soft), 0.78);
+  stroke-width: 1.15;
+  filter: drop-shadow(0 0 5px rgba(var(--rgb-neon-gold), 0.2));
+}
+
+.record-reveal-emblem__hex--inner {
+  stroke: rgba(var(--rgb-ember), 0.66);
+  stroke-width: var(--line-thin);
+}
+
+.record-reveal-emblem__node {
+  fill: var(--color-accent-hot);
+  filter:
+    drop-shadow(0 0 4px rgba(var(--rgb-neon-gold), 0.72))
+    drop-shadow(0 0 11px rgba(var(--rgb-neon-ember), 0.34));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .record-reveal-emblem {
+    filter: none;
+  }
+}
+
 .minimap {
   position: fixed;
   right: var(--shell-pad);
@@ -662,6 +722,9 @@
 }
 
 .minimap-modal__header button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   border: 1px solid rgba(var(--rgb-ember), 0.32);
   border-radius: var(--radius-sm);
   background: rgba(var(--rgb-ember), 0.06);

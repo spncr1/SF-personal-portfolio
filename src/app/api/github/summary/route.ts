@@ -1,55 +1,13 @@
+import {
+  getGitHubUsername,
+  githubFetch,
+  hasGitHubToken,
+  type GitHubRepoResponse,
+  type GitHubUserResponse,
+} from "@/lib/github";
 import type { GitHubLanguageStat, GitHubSummary } from "@/types/github";
 
 export const dynamic = "force-dynamic";
-
-interface GitHubUserResponse {
-  login: string;
-  html_url: string;
-  public_repos: number;
-}
-
-interface GitHubRepoResponse {
-  name: string;
-  description: string | null;
-  html_url: string;
-  fork: boolean;
-  archived: boolean;
-  language: string | null;
-  stargazers_count: number;
-  forks_count: number;
-  pushed_at: string | null;
-  updated_at: string;
-  owner: {
-    login: string;
-  };
-}
-
-function githubHeaders() {
-  const headers: Record<string, string> = {
-    Accept: "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28",
-    "User-Agent": "spencer-fisher-portfolio",
-  };
-
-  if (process.env.GITHUB_TOKEN) {
-    headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
-  }
-
-  return headers;
-}
-
-async function githubFetch<T>(path: string): Promise<T> {
-  const response = await fetch(`https://api.github.com${path}`, {
-    headers: githubHeaders(),
-    next: { revalidate: 900 },
-  });
-
-  if (!response.ok) {
-    throw new Error(`GitHub request failed: ${response.status}`);
-  }
-
-  return response.json() as Promise<T>;
-}
 
 function countLanguages(repos: GitHubRepoResponse[]): GitHubLanguageStat[] {
   const languageCounts = new Map<string, number>();
@@ -91,9 +49,9 @@ function latestRepo(repos: GitHubRepoResponse[]) {
 }
 
 export async function GET() {
-  const username = process.env.GITHUB_USERNAME?.trim() || "spncr1";
+  const username = getGitHubUsername();
   const encodedUsername = encodeURIComponent(username);
-  const hasToken = Boolean(process.env.GITHUB_TOKEN);
+  const hasToken = hasGitHubToken();
 
   try {
     const userPromise = githubFetch<GitHubUserResponse>(`/users/${encodedUsername}`);
