@@ -1,3 +1,5 @@
+import { DEFAULT_GITHUB_USERNAME } from "@/data/githubRepositories";
+
 export interface GitHubUserResponse {
   login: string;
   html_url: string;
@@ -8,6 +10,7 @@ export interface GitHubRepoResponse {
   name: string;
   description: string | null;
   html_url: string;
+  private: boolean;
   fork: boolean;
   archived: boolean;
   language: string | null;
@@ -42,7 +45,7 @@ export class GitHubRequestError extends Error {
 }
 
 export function getGitHubUsername() {
-  return process.env.GITHUB_USERNAME?.trim() || "spncr1";
+  return process.env.GITHUB_USERNAME?.trim() || DEFAULT_GITHUB_USERNAME;
 }
 
 export function hasGitHubToken() {

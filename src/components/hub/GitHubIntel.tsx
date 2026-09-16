@@ -3,33 +3,10 @@
 import { useEffect, useState } from "react";
 import { CountUpValue } from "@/components/ui/CountUpValue";
 import { SiteIcon } from "@/components/ui/SiteIcon";
+import { formatRelativeTime } from "@/lib/relativeTime";
 import type { GitHubSummary } from "@/types/github";
 
 type LoadState = "loading" | "ready" | "error";
-
-function formatRelativeTime(value: string | null) {
-  if (!value) return "No pushes";
-
-  const timestamp = new Date(value).getTime();
-  const diffSeconds = Math.round((timestamp - Date.now()) / 1000);
-  const units: Array<[Intl.RelativeTimeFormatUnit, number]> = [
-    ["year", 31_536_000],
-    ["month", 2_592_000],
-    ["day", 86_400],
-    ["hour", 3_600],
-    ["minute", 60],
-  ];
-  const formatter = new Intl.RelativeTimeFormat("en-AU", { numeric: "auto" });
-
-  for (const [unit, seconds] of units) {
-    const amount = Math.trunc(diffSeconds / seconds);
-    if (Math.abs(amount) >= 1) {
-      return formatter.format(amount, unit);
-    }
-  }
-
-  return "Just now";
-}
 
 export function GitHubIntel() {
   const [state, setState] = useState<LoadState>("loading");
@@ -65,7 +42,7 @@ export function GitHubIntel() {
     return (
       <section className="central-hub__github-card" aria-label="GitHub intelligence">
         <div className="central-hub__github-header">
-          <span><SiteIcon name="code" />GitHub Live</span>
+          <span><SiteIcon name="github" />GitHub</span>
           <strong>Syncing</strong>
         </div>
         <p className="central-hub__github-message">Repository telemetry access link in progress.</p>
@@ -77,7 +54,7 @@ export function GitHubIntel() {
     return (
       <section className="central-hub__github-card" aria-label="GitHub intelligence">
         <div className="central-hub__github-header">
-          <span><SiteIcon name="code" />GitHub Live</span>
+          <span><SiteIcon name="github" />GitHub</span>
           <strong>Offline</strong>
         </div>
         <p className="central-hub__github-message">GitHub telemetry is unavailable right now.</p>
@@ -90,7 +67,7 @@ export function GitHubIntel() {
   return (
     <section className="central-hub__github-card" aria-label="GitHub intelligence">
       <div className="central-hub__github-header">
-        <span><SiteIcon name="code" />GitHub Live</span>
+        <span><SiteIcon name="github" />GitHub</span>
         <a href={summary.profileUrl} target="_blank" rel="noreferrer">
           @{summary.username}
           <SiteIcon name="open-in-new" />

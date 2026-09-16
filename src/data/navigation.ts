@@ -85,8 +85,8 @@ export const sectors: SectorNode[] = [
   },
   {
     id: "personnel",
-    label: "Personnel Record",
-    shortLabel: "Personnel Record",
+    label: "Personnel File",
+    shortLabel: "Personnel File",
     descriptor: "Operator profile",
     route: "/personnel",
     coordinates: getRayAlignedNodeCoordinates("personnel"),

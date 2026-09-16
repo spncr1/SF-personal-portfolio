@@ -1,3 +1,4 @@
+import { getGitHubRepositoryUrl } from "@/data/githubRepositories";
 import type { ProjectDetail } from "@/types/project";
 
 export const projects: ProjectDetail[] = [
@@ -54,7 +55,7 @@ export const projects: ProjectDetail[] = [
       },
     ],
     timeline: "December 2025 to present",
-    github: "https://github.com/spncr1/nexa-v2",
+    github: getGitHubRepositoryUrl("nexa"),
     live: "https://nexa-next.vercel.app/",
   },
   {
@@ -105,7 +106,7 @@ export const projects: ProjectDetail[] = [
       },
     ],
     timeline: "April 2026 to present",
-    github: "https://github.com/spncr1/atmosfc-v1",
+    github: getGitHubRepositoryUrl("atmos-fc"),
     live: "https://atmosfc-v1.vercel.app/",
   },
 ];

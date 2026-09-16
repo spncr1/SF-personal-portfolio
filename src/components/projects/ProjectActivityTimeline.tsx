@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 
 import { SiteIcon } from "@/components/ui/SiteIcon";
@@ -10,6 +11,22 @@ type TimelineLoadState = "loading" | "ready" | "unavailable";
 
 interface ProjectActivityTimelineProps {
   project: ProjectDetail;
+}
+
+function ActivityColumnRow({
+  children,
+  className,
+  columns,
+}: {
+  children: ReactNode;
+  className: string;
+  columns: 2 | 3;
+}) {
+  return (
+    <div className={`project-activity__column-row ${className}`} data-columns={columns}>
+      {children}
+    </div>
+  );
 }
 
 const monthFormatter = new Intl.DateTimeFormat("en-AU", { month: "short", timeZone: "UTC" });
@@ -82,7 +99,7 @@ export function ProjectActivityTimeline({ project }: ProjectActivityTimelineProp
 
   return (
     <div className="project-activity">
-      <div className="project-activity__summary">
+      <ActivityColumnRow className="project-activity__summary" columns={3}>
         <div>
           <strong>{timeline.totalCommits ?? 0}</strong>
           <span>Total commits</span>
@@ -95,7 +112,7 @@ export function ProjectActivityTimeline({ project }: ProjectActivityTimelineProp
           <strong>{timeline.peakWeekCommits ?? 0}</strong>
           <span>Commits during peak week</span>
         </div>
-      </div>
+      </ActivityColumnRow>
 
       <p className="project-activity__range">
         <time dateTime={timeline.startedAt}>{dateFormatter.format(new Date(timeline.startedAt))}</time>
@@ -136,28 +153,30 @@ export function ProjectActivityTimeline({ project }: ProjectActivityTimelineProp
         </div>
       </div>
 
-      {(timeline.firstCommit || timeline.latestCommit) && (
-        <div className="project-activity__milestones">
-          {timeline.firstCommit && <CommitMilestone commit={timeline.firstCommit} label="Project initialisation" />}
-          {timeline.latestCommit && <CommitMilestone commit={timeline.latestCommit} label="Latest update" />}
-        </div>
-      )}
+      <div className="project-activity__footer-rows">
+        {(timeline.firstCommit || timeline.latestCommit) && (
+          <ActivityColumnRow className="project-activity__milestones" columns={2}>
+            {timeline.firstCommit && <CommitMilestone commit={timeline.firstCommit} label="Project initialisation" />}
+            {timeline.latestCommit && <CommitMilestone commit={timeline.latestCommit} label="Latest update" />}
+          </ActivityColumnRow>
+        )}
 
-      <div className="project-activity__links">
-        {project.github && (
-          <a href={project.github} target="_blank" rel="noreferrer">
-            <SiteIcon className="project-activity__link-icon" name="github" />
-            <span>REPOSITORY</span>
-            <SiteIcon className="project-activity__external-icon" name="open-in-new" />
-          </a>
-        )}
-        {project.live && (
-          <a href={project.live} target="_blank" rel="noreferrer">
-            <SiteIcon className="project-activity__link-icon" name="vercel" />
-            <span>DEPLOYMENT</span>
-            <SiteIcon className="project-activity__external-icon" name="open-in-new" />
-          </a>
-        )}
+        <ActivityColumnRow className="project-activity__links" columns={2}>
+          {project.github && (
+            <a href={project.github} target="_blank" rel="noreferrer">
+              <SiteIcon className="project-activity__link-icon" name="github" />
+              <span>REPOSITORY</span>
+              <SiteIcon className="project-activity__external-icon" name="open-in-new" />
+            </a>
+          )}
+          {project.live && (
+            <a href={project.live} target="_blank" rel="noreferrer">
+              <SiteIcon className="project-activity__link-icon" name="vercel" />
+              <span>DEPLOYMENT</span>
+              <SiteIcon className="project-activity__external-icon" name="open-in-new" />
+            </a>
+          )}
+        </ActivityColumnRow>
       </div>
     </div>
   );

@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-  "dev": "next dev -H 127.0.0.1 -p 3001",
-  "build": "next build",
-  "start": "next start",
-  "lint": "eslint"
+    "dev": "next dev -H 127.0.0.1 -p 3001",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
   },
   "dependencies": {
     "@svgdotjs/svg.js": "^3.2.8",
@@ -15,6 +15,7 @@
     "mapbox-gl": "^3.29.0",
     "motion": "^13.1.1",
     "next": "16.3.2",
+    "openai": "^6.49.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },

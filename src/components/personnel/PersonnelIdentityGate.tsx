@@ -107,7 +107,7 @@ export function PersonnelIdentityGate({ portrait, onComplete }: PersonnelIdentit
       ref={rootRef}
       role="dialog"
       aria-modal="true"
-      aria-label="Personnel Record identity verification"
+      aria-label="Personnel File identity verification"
       tabIndex={-1}
     >
       <div className="personnel-gate__ambient" aria-hidden="true">
@@ -170,7 +170,7 @@ export function PersonnelIdentityGate({ portrait, onComplete }: PersonnelIdentit
         </div>
 
         <p className="personnel-gate__subject" data-visible={identityVerified} aria-live="polite">
-          {identityVerified ? "Spencer Fisher // Personnel Record" : null}
+          {identityVerified ? "Spencer Fisher // Personnel File" : null}
         </p>
 
         <div className="boot-sequence__meter-row personnel-gate__meter-row" aria-hidden="true">

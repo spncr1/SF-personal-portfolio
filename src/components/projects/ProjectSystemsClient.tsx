@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useParams, useRouter } from "next/navigation";
 
 import { ProjectArchiveRecord } from "@/components/projects/ProjectArchiveRecord";
 import { ProjectIndex } from "@/components/projects/ProjectIndex";
@@ -15,24 +16,17 @@ interface ProjectSystemsClientProps {
 }
 
 export function ProjectSystemsClient({ initialSlug }: ProjectSystemsClientProps) {
-  const [selectedProject, setSelectedProject] = useState<ProjectDetail>(
-    () => projects.find((project) => project.slug === initialSlug) ?? projects[0],
-  );
-  const [recordOpen, setRecordOpen] = useState(false);
+  const router = useRouter();
+  const params = useParams<{ slug?: string }>();
   const shouldReduceMotion = Boolean(useReducedMotion());
-
-  useEffect(() => {
-    const revealTimer = window.setTimeout(
-      () => setRecordOpen(true),
-      shouldReduceMotion ? 0 : 1060,
-    );
-
-    return () => window.clearTimeout(revealTimer);
-  }, [selectedProject.slug, shouldReduceMotion]);
+  const selectedSlug = params.slug ?? initialSlug;
+  const selectedProject =
+    projects.find((project) => project.slug === selectedSlug) ?? projects[0];
 
   function selectProject(project: ProjectDetail) {
-    setRecordOpen(false);
-    setSelectedProject(project);
+    if (project.slug === selectedProject.slug) return;
+
+    router.push(`/projects/${project.slug}`, { scroll: false });
   }
 
   return (
@@ -49,33 +43,61 @@ export function ProjectSystemsClient({ initialSlug }: ProjectSystemsClientProps)
           onSelect={selectProject}
         />
 
-        <div className="project-systems__record-stage" aria-live="polite">
-          <AnimatePresence mode="wait" initial={false}>
-            {!recordOpen ? (
-              <motion.div
-                key={`unlock-${selectedProject.slug}`}
-                className="project-systems__unlock"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.24 }}
-              >
-                <RecordRevealEmblem
-                  mode="closed"
-                  ariaLabel={`Unlocking ${selectedProject.title} project record`}
-                />
-                <span>Opening {selectedProject.recordCode}</span>
-              </motion.div>
-            ) : (
-              <ProjectArchiveRecord
-                key={`record-${selectedProject.slug}`}
-                project={selectedProject}
-                reduceMotion={shouldReduceMotion}
-              />
-            )}
-          </AnimatePresence>
-        </div>
+        <ProjectRecordStage
+          key={selectedProject.slug}
+          project={selectedProject}
+          reduceMotion={shouldReduceMotion}
+        />
       </div>
     </section>
+  );
+}
+
+function ProjectRecordStage({
+  project,
+  reduceMotion,
+}: {
+  project: ProjectDetail;
+  reduceMotion: boolean;
+}) {
+  const [recordOpen, setRecordOpen] = useState(false);
+
+  useEffect(() => {
+    const revealTimer = window.setTimeout(
+      () => setRecordOpen(true),
+      reduceMotion ? 0 : 1060,
+    );
+
+    return () => window.clearTimeout(revealTimer);
+  }, [reduceMotion]);
+
+  return (
+    <div className="project-systems__record-stage" aria-live="polite">
+      <AnimatePresence mode="wait" initial={false}>
+        {!recordOpen ? (
+          <motion.div
+            key={`unlock-${project.slug}`}
+            className="project-systems__unlock"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={reduceMotion ? { duration: 0 } : { duration: 0.24 }}
+          >
+            <RecordRevealEmblem
+              mode="closed"
+              ariaLabel={`Unlocking ${project.title} project record`}
+              showNode={false}
+            />
+            <span>Opening {project.recordCode}</span>
+          </motion.div>
+        ) : (
+          <ProjectArchiveRecord
+            key={`record-${project.slug}`}
+            project={project}
+            reduceMotion={reduceMotion}
+          />
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

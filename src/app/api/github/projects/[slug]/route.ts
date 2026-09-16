@@ -1,4 +1,9 @@
 import {
+  getGitHubRepositoryUrl,
+  githubRepositories,
+  isProjectRepositoryId,
+} from "@/data/githubRepositories";
+import {
   getGitHubUsername,
   githubFetch,
   GitHubRequestError,
@@ -18,13 +23,6 @@ export const dynamic = "force-dynamic";
 const PAGE_SIZE = 100;
 const REVALIDATE_SECONDS = 900;
 const MAX_PAGES = 10;
-
-const projectRepositories = {
-  "atmos-fc": { repository: "atmosfc-v1" },
-  nexa: { repository: "nexa-v2" },
-} as const;
-
-type ProjectSlug = keyof typeof projectRepositories;
 
 function startOfUtcWeek(value: Date) {
   const date = new Date(value);
@@ -114,14 +112,14 @@ async function getProjectCommits(owner: string, repository: string, since: strin
 
 export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  if (!(slug in projectRepositories)) {
+  if (!isProjectRepositoryId(slug)) {
     return Response.json({ error: "Unknown project" }, { status: 404 });
   }
 
-  const projectId = slug as ProjectSlug;
-  const project = projectRepositories[projectId];
+  const projectId = slug;
+  const project = githubRepositories[projectId];
   const username = getGitHubUsername();
-  const repositoryUrl = `https://github.com/${encodeURIComponent(username)}/${encodeURIComponent(project.repository)}`;
+  const repositoryUrl = getGitHubRepositoryUrl(projectId, username);
   const now = new Date().toISOString();
 
   try {
@@ -129,6 +127,10 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
       `/repos/${encodeURIComponent(username)}/${encodeURIComponent(project.repository)}`,
       REVALIDATE_SECONDS,
     );
+    if (repository.private) {
+      throw new GitHubRequestError(404);
+    }
+
     const responses = await getProjectCommits(username, project.repository, repository.created_at);
     const commits = responses
       .map(toTimelineCommit)

@@ -78,7 +78,7 @@ export default function CentralHubPage() {
           <span>Command Centre</span>
         </span>
         <span>SF // Operations System v2.0.</span>
-        <span>© 2026 Spencer Fisher Interface</span>
+        <span>&copy; 2026 Spencer Fisher Interface</span>
       </div>
     </section>
   );

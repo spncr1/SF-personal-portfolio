@@ -1,15 +1,20 @@
 import {
+  getGitHubRepositoryUrl,
+  githubRepositories,
+  operationRepositoryIds,
+} from "@/data/githubRepositories";
+import {
   getGitHubUsername,
   githubFetch,
   GitHubRequestError,
   hasGitHubToken,
   type GitHubCommitResponse,
+  type GitHubRepoResponse,
 } from "@/lib/github";
 import type {
   GitHubCommitSignal,
   GitHubOperationsActivity,
   GitHubRepositoryActivity,
-  OperationRepositoryId,
 } from "@/types/github";
 
 export const dynamic = "force-dynamic";
@@ -17,15 +22,6 @@ export const dynamic = "force-dynamic";
 const WINDOW_DAYS = 7 as const;
 const PAGE_SIZE = 100;
 const REVALIDATE_SECONDS = 300;
-
-const OPERATION_REPOSITORIES: ReadonlyArray<{
-  id: OperationRepositoryId;
-  repository: string;
-}> = [
-  { id: "atmos-fc", repository: "atmosfc-v1" },
-  { id: "nexa", repository: "nexa-v2" },
-  { id: "portfolio", repository: "SF-personal-portfolio" },
-];
 
 function toCommitSignal(commit: GitHubCommitResponse): GitHubCommitSignal | null {
   const committedAt = commit.commit.committer?.date ?? commit.commit.author?.date;
@@ -67,13 +63,21 @@ async function getLatestCommit(owner: string, repository: string) {
 
 async function getRepositoryActivity(
   username: string,
-  repositoryConfig: (typeof OPERATION_REPOSITORIES)[number],
+  id: (typeof operationRepositoryIds)[number],
   windowStartedAt: string,
 ): Promise<GitHubRepositoryActivity> {
-  const { id, repository } = repositoryConfig;
-  const repositoryUrl = `https://github.com/${encodeURIComponent(username)}/${encodeURIComponent(repository)}`;
+  const { repository } = githubRepositories[id];
+  const repositoryUrl = getGitHubRepositoryUrl(id, username);
 
   try {
+    const repositoryResponse = await githubFetch<GitHubRepoResponse>(
+      `/repos/${encodeURIComponent(username)}/${encodeURIComponent(repository)}`,
+      REVALIDATE_SECONDS,
+    );
+    if (repositoryResponse.private) {
+      throw new GitHubRequestError(404);
+    }
+
     const recentCommits = await getRecentCommits(username, repository, windowStartedAt);
     const latestResponse = recentCommits[0] ?? (await getLatestCommit(username, repository));
     const latestCommit = latestResponse ? toCommitSignal(latestResponse) : null;
@@ -114,8 +118,8 @@ export async function GET() {
   const now = new Date();
   const windowStartedAt = new Date(now.getTime() - WINDOW_DAYS * 86_400_000).toISOString();
   const repositories = await Promise.all(
-    OPERATION_REPOSITORIES.map((repository) =>
-      getRepositoryActivity(username, repository, windowStartedAt),
+    operationRepositoryIds.map((repositoryId) =>
+      getRepositoryActivity(username, repositoryId, windowStartedAt),
     ),
   );
 

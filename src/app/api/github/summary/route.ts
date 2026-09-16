@@ -55,20 +55,20 @@ export async function GET() {
 
   try {
     const userPromise = githubFetch<GitHubUserResponse>(`/users/${encodedUsername}`);
-    const reposPromise = hasToken
-      ? githubFetch<GitHubRepoResponse[]>("/user/repos?per_page=100&sort=updated&affiliation=owner")
-      : githubFetch<GitHubRepoResponse[]>(`/users/${encodedUsername}/repos?per_page=100&sort=updated&type=owner`);
+    const reposPromise = githubFetch<GitHubRepoResponse[]>(
+      `/users/${encodedUsername}/repos?per_page=100&sort=updated&type=owner`,
+    );
 
     const [user, reposResponse] = await Promise.all([userPromise, reposPromise]);
     const ownedRepos = reposResponse.filter(
-      (repo) => repo.owner.login.toLowerCase() === username.toLowerCase() && !repo.fork,
+      (repo) => repo.owner.login.toLowerCase() === username.toLowerCase() && !repo.private && !repo.fork,
     );
     const signalRepos = ownedRepos.filter((repo) => !repo.archived);
 
     const summary: GitHubSummary = {
       username: user.login,
       profileUrl: user.html_url,
-      publicRepos: hasToken ? ownedRepos.length : user.public_repos,
+      publicRepos: user.public_repos,
       activeRepos: signalRepos.filter(isRecentlyActive).length,
       totalStars: signalRepos.reduce((total, repo) => total + repo.stargazers_count, 0),
       totalForks: signalRepos.reduce((total, repo) => total + repo.forks_count, 0),

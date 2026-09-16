@@ -32,7 +32,6 @@ const iconFiles = {
   postgresql: "postgresql.svg",
   python: "python.svg",
   school: "school.svg",
-  "screenshot-monitor": "screenshot-monitor.svg",
   sqlite: "sqlite.svg",
   soccer: "soccer.svg",
   vercel: "vercel.svg",

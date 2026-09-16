@@ -29,6 +29,7 @@ export interface Profile {
   technicalInterests: string[];
   personalInterests: PersonalInterest[];
   portrait?: string;
+  identityPortrait: string;
   personnelPortrait: string;
 }
 
@@ -132,6 +133,7 @@ export const profile: Profile = {
       icon: "drawing",
     },
   ],
-  portrait: "/images/profile/spencer-fisher.jpg",
-  personnelPortrait: "/images/profile/spencer-fisher-2.jpg",
+  portrait: "/images/profile/spencer-fisher-3.webp",
+  identityPortrait: "/images/profile/spencer-fisher-2.jpg",
+  personnelPortrait: "/images/profile/spencer-fisher.jpg",
 };

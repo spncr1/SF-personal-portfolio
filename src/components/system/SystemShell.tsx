@@ -71,7 +71,7 @@ export function SystemShell({ children }: SystemShellProps) {
 
       <footer className="system-shell__footer">
         <span>SYS-2099</span>
-        <span>© 2026 Spencer Fisher / Personal interface</span>
+        <span>&copy; 2026 Spencer Fisher // Personal interface</span>
       </footer>
 
       {bootState === "running" && <BootSequence onComplete={completeBoot} />}

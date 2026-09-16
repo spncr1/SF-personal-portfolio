@@ -33,7 +33,7 @@ export function PersonnelRecord() {
     <section className="sector sector--personnel sector-frame personnel-record" data-gate={gateComplete ? "complete" : "scanning"}>
       <PersonnelIdentityGate
         key={gateRunId}
-        portrait={profile.personnelPortrait}
+        portrait={profile.identityPortrait}
         onComplete={completeGate}
       />
 
@@ -45,7 +45,7 @@ export function PersonnelRecord() {
         <div className="sector-frame__masthead">
           <div>
             <SystemLabel>Who is Spencer Fisher?</SystemLabel>
-            <h1>Personnel Record</h1>
+            <h1>Personnel File</h1>
           </div>
         </div>
 

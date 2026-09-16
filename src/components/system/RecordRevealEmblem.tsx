@@ -10,12 +10,14 @@ interface RecordRevealEmblemProps {
   mode: RecordRevealMode;
   className?: string;
   ariaLabel?: string;
+  showNode?: boolean;
 }
 
 export function RecordRevealEmblem({
   mode,
   className,
   ariaLabel,
+  showNode = true,
 }: RecordRevealEmblemProps) {
   const shouldReduceMotion = Boolean(useReducedMotion());
   const ringLength = mode === "open" ? 0.56 : 1;
@@ -58,7 +60,7 @@ export function RecordRevealEmblem({
       >
         <polygon className="record-reveal-emblem__hex record-reveal-emblem__hex--outer" points={hexPoints(50, 50, 18)} />
         <polygon className="record-reveal-emblem__hex record-reveal-emblem__hex--inner" points={hexPoints(50, 50, 10.5)} />
-        <circle className="record-reveal-emblem__node" cx="50" cy="50" r="2.4" />
+        {showNode && <circle className="record-reveal-emblem__node" cx="50" cy="50" r="2.4" />}
       </motion.g>
     </svg>
   );
