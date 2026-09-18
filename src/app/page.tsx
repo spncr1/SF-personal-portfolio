@@ -74,7 +74,6 @@ export default function CentralHubPage() {
 
       <div className="central-hub__bottom-bar" aria-hidden="true" data-system-load>
         <span className="central-hub__bottom-anchor">
-          <span className="central-hub__bottom-anchor-mark">N</span>
           <span>Command Centre</span>
         </span>
         <span>SF // Operations System v2.0.</span>
