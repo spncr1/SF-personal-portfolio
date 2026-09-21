@@ -3118,32 +3118,8 @@ ul {
 }
 
 @media (max-width: 720px) {
-  .central-hub,
   .sector {
     padding: var(--space-md);
-  }
-
-  .central-hub {
-    grid-template-rows: auto minmax(22rem, 1fr);
-  }
-
-  .central-hub__status {
-    display: none;
-  }
-
-  .network-map-shell,
-  .network-map {
-    min-height: 22rem;
-  }
-
-  .network-map-shell__hud--right {
-    display: none;
-  }
-
-  .network-readout {
-    left: var(--space-md);
-    right: var(--space-md);
-    min-width: 0;
   }
 
   .sector-transition__scan {
@@ -3192,6 +3168,9 @@ ul {
 
 .central-hub {
   position: relative;
+  grid-template-areas:
+    "status main intel"
+    "bottom bottom bottom";
   grid-template-columns: minmax(10rem, 13rem) minmax(0, 1fr) minmax(11rem, 15rem);
   grid-template-rows: minmax(0, 1fr) auto;
   gap: clamp(0.55rem, 1.1vw, 0.9rem);
@@ -3219,6 +3198,7 @@ ul {
 }
 
 .central-hub__main {
+  grid-area: main;
   position: relative;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
@@ -3286,6 +3266,14 @@ ul {
     inset 0 0 38px rgba(var(--rgb-rust), 0.1),
     inset 0 0 0 1px rgba(var(--rgb-slate), 0.14);
   clip-path: polygon(0 0, calc(100% - 0.85rem) 0, 100% 0.85rem, 100% 100%, 0.85rem 100%, 0 calc(100% - 0.85rem));
+}
+
+.central-hub__rail--left {
+  grid-area: status;
+}
+
+.central-hub__rail--right {
+  grid-area: intel;
 }
 
 .central-hub__status-card,
@@ -3971,48 +3959,6 @@ ul {
   .hud-modal__panel[data-size="wide"] {
     width: min(92vw, 42rem);
   }
-
-  .central-hub__mapbox-hex-overlay {
-    opacity: 0.82;
-  }
-
-  .central-hub__mapbox-hex-layer--backplane {
-    opacity: 0.38;
-  }
-
-  .central-hub__mapbox-hex-cell--edge,
-  .central-hub__mapbox-hex-cell--peripheral,
-  .central-hub__mapbox-hex-cell--ghost {
-    opacity: 0.42;
-  }
-}
-
-@media (max-width: 760px), (max-height: 720px) {
-  .central-hub__mapbox-hex-overlay {
-    opacity: 0.68;
-  }
-
-  .central-hub__mapbox-hex-layer--backplane {
-    opacity: 0.22;
-    visibility: visible;
-  }
-
-  .central-hub__mapbox-hex-cell {
-    stroke-width: 0.03rem;
-  }
-}
-
-@media (max-width: 560px), (max-height: 620px) {
-  .central-hub__mapbox-hex-overlay {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  .central-hub__mapbox-hex-layer,
-  .central-hub__mapbox-hex-cell,
-  .central-hub__mapbox-hex-cell--primary {
-    animation: none;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4199,6 +4145,7 @@ ul {
 }
 
 .central-hub__bottom-bar {
+  grid-area: bottom;
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -4644,50 +4591,262 @@ ul {
   stroke: rgba(var(--rgb-neon-ember), 0.78);
 }
 
+/*  ===================================
+            RESPONSIVE DESIGN
+    ===================================
+*/
+
 @media (max-width: 1180px) {
+  .system-shell[data-sector="hub"] .system-shell__content {
+    overflow-x: clip;
+    overflow-y: auto;
+  }
+
+  .system-shell[data-sector="hub"] .system-shell__stage,
+  .system-shell[data-sector="hub"] .sector-transition {
+    height: auto;
+    min-height: 100%;
+  }
+
   .central-hub {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "main main"
+      "status intel"
+      "bottom bottom";
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto auto auto;
+    align-items: start;
+    height: auto;
+    min-height: 100%;
+  }
+
+  .central-hub__main {
+    width: 100%;
+    height: auto;
+    min-height: 0;
   }
 
   .central-hub__rail {
-    display: none;
+    display: grid;
+    width: 100%;
+    height: 100%;
+  }
+
+  .network-map-shell {
+    height: clamp(34rem, 68dvh, 46rem);
+    min-height: 34rem;
+  }
+
+  .network-map {
+    min-height: 0;
   }
 
   .central-hub__bottom-bar {
+    width: 100%;
     font-size: 0.54rem;
   }
 }
 
 @media (max-width: 720px) {
+  .system-shell[data-sector="hub"] .system-shell__header {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .system-shell[data-sector="hub"] .system-shell__meta {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .system-shell[data-sector="hub"] .system-shell__header > .status-indicator {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+
   .system-shell[data-sector="hub"] .system-shell__content {
-    overflow: auto;
+    overflow-x: clip;
+    overflow-y: auto;
   }
 
   .central-hub {
-    min-height: 44rem;
-    padding: var(--space-md);
+    grid-template-areas:
+      "main"
+      "intel"
+      "status"
+      "bottom";
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(4, auto);
+    gap: clamp(0.85rem, 4vw, 1.15rem);
+    width: 100%;
+    min-height: 0;
+    padding: clamp(0.75rem, 4vw, 1rem);
+  }
+
+  .central-hub__main {
+    grid-template-rows: auto auto auto;
+    gap: clamp(0.55rem, 2.5vw, 0.8rem);
   }
 
   .central-hub__intro h1 {
-    font-size: 1.35rem;
+    font-size: clamp(1.12rem, 5.8vw, 1.35rem);
     line-height: 1.08;
   }
 
-  .network-map-shell,
+  .central-hub__intro span {
+    font-size: clamp(0.52rem, 2.6vw, 0.62rem);
+    line-height: 1.45;
+  }
+
+  .network-map-shell {
+    display: grid;
+    grid-template-rows: auto;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+
   .network-map {
-    min-height: 30rem;
+    position: relative;
+    inset: auto;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 1 / 1;
+  }
+
+  .network-map-shell__hud {
+    top: 0.35rem;
+    max-width: 42%;
+    font-size: clamp(0.4rem, 2vw, 0.52rem);
+    line-height: 1.3;
+  }
+
+  .network-map-shell__hud--left {
+    left: 0.35rem;
+  }
+
+  .network-map-shell__hud--right {
+    right: 0.35rem;
+    display: grid;
   }
 
   .network-readout {
-    bottom: 0.65rem;
+    display: none;
+  }
+
+  .central-hub__rail {
+    height: auto;
+    gap: clamp(0.8rem, 3.5vw, 1rem);
+    padding: clamp(0.85rem, 4vw, 1rem);
+  }
+
+  .central-hub__github-intel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .central-hub__github-intel div {
+    display: grid;
+    align-content: start;
+    gap: 0.25rem;
+    min-width: 0;
+    border: 1px solid rgba(var(--rgb-slate), 0.24);
+    padding: 0.55rem;
+  }
+
+  .central-hub__github-intel div:nth-child(5) {
+    grid-column: 1 / -1;
+  }
+
+  .central-hub__github-intel dd {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .central-hub__repo-signal,
+  .central-hub__language-strip,
+  .central-hub__github-message {
+    width: 100%;
+  }
+
+  .central-hub__map-frame,
+  .central-hub__mapbox-canvas,
+  .central-hub__mapbox-fallback {
+    width: 100%;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+  }
+
+  .central-hub__map-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .central-hub__status-stack dl {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.45rem;
+  }
+
+  .central-hub__status-stack dl div {
+    display: grid;
+    justify-content: stretch;
+    gap: 0.25rem;
+    min-width: 0;
+    border: 1px solid rgba(var(--rgb-slate), 0.24);
+    padding: 0.55rem 0.4rem;
+    text-align: center;
+  }
+
+  .central-hub__status-stack dd {
+    justify-content: center;
+    min-width: 0;
+    text-align: center;
+  }
+
+  .central-hub__clock-card > strong {
+    font-size: clamp(1.35rem, 7vw, 1.8rem);
+  }
+
+  .central-hub__clock-card dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem;
+  }
+
+  .central-hub__clock-card dl div {
+    display: grid;
+    gap: 0.25rem;
+    min-width: 0;
+    border: 1px solid rgba(var(--rgb-slate), 0.24);
+    padding: 0.55rem;
+  }
+
+  .central-hub__clock-card dd {
+    text-align: left;
+  }
+
+  .central-hub__brand-card {
+    min-height: 7rem;
+    margin-top: 0;
+  }
+
+  .central-hub__brand-card img {
+    width: min(28%, 5.75rem);
   }
 
   .central-hub__bottom-bar {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.3rem;
+    padding: 0.65rem 1rem;
+    text-align: center;
+  }
+
+  .central-hub__bottom-bar span,
+  .central-hub__bottom-anchor {
+    justify-self: center;
     text-align: center;
   }
 }
