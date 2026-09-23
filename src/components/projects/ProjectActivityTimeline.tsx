@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { SiteIcon } from "@/components/ui/SiteIcon";
 import type { GitHubProjectTimeline, GitHubTimelineCommit } from "@/types/github";
@@ -56,6 +56,8 @@ function CommitMilestone({ commit, label }: { commit: GitHubTimelineCommit; labe
 export function ProjectActivityTimeline({ project }: ProjectActivityTimelineProps) {
   const [state, setState] = useState<TimelineLoadState>("loading");
   const [timeline, setTimeline] = useState<GitHubProjectTimeline | null>(null);
+  const [scrollCue, setScrollCue] = useState<"left" | "right" | "none">("none");
+  const chartRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -81,6 +83,30 @@ export function ProjectActivityTimeline({ project }: ProjectActivityTimelineProp
       cancelled = true;
     };
   }, [project.slug]);
+
+  useEffect(() => {
+    const chart = chartRef.current;
+    if (!chart || !timeline) return;
+
+    const updateScrollCues = () => {
+      const maximumScroll = Math.max(0, chart.scrollWidth - chart.clientWidth);
+      const hasOverflow = maximumScroll > 2;
+      const isAtRightEdge = hasOverflow && chart.scrollLeft >= maximumScroll - 2;
+
+      setScrollCue(hasOverflow ? (isAtRightEdge ? "left" : "right") : "none");
+    };
+
+    const updateFrame = window.requestAnimationFrame(updateScrollCues);
+    const resizeObserver = new ResizeObserver(updateScrollCues);
+    resizeObserver.observe(chart);
+    chart.addEventListener("scroll", updateScrollCues, { passive: true });
+
+    return () => {
+      window.cancelAnimationFrame(updateFrame);
+      resizeObserver.disconnect();
+      chart.removeEventListener("scroll", updateScrollCues);
+    };
+  }, [timeline]);
 
   if (state === "loading") {
     return <p className="project-activity__state">Synchronising repository history</p>;
@@ -120,37 +146,44 @@ export function ProjectActivityTimeline({ project }: ProjectActivityTimelineProp
         <span>Present</span>
       </p>
 
-      <div className="project-activity__chart-wrap">
-        <ul className="project-activity__months-grid" aria-label={`${timeline.totalCommits ?? 0} commits grouped by month`}>
-          {timeline.months.map((month) => {
-            const monthDate = new Date(month.startedAt);
-            const fill = month.commits === 0 ? 0 : Math.max(12, Math.round((month.commits / peakMonth) * 100));
+      <div
+        className="project-activity__chart-shell"
+        data-scroll-cue={scrollCue}
+      >
+        <div className="project-activity__chart-wrap" ref={chartRef}>
+          <ul className="project-activity__months-grid" aria-label={`${timeline.totalCommits ?? 0} commits grouped by month`}>
+            {timeline.months.map((month) => {
+              const monthDate = new Date(month.startedAt);
+              const fill = month.commits === 0 ? 0 : Math.max(12, Math.round((month.commits / peakMonth) * 100));
 
-            return (
-              <li key={month.startedAt} title={`${monthFormatter.format(monthDate)} ${monthDate.getUTCFullYear()}: ${month.commits} ${month.commits === 1 ? "commit" : "commits"}`}>
-                <div className="project-activity__month-heading">
-                  <span>{monthFormatter.format(monthDate)}</span>
-                  <time dateTime={month.startedAt}>{monthDate.getUTCFullYear()}</time>
-                </div>
-                <div className="project-activity__month-meter" aria-hidden="true">
-                  <i style={{ height: `${fill}%` }} />
-                </div>
-                <strong>{month.commits}</strong>
-                <span className="project-activity__month-unit">{month.commits === 1 ? "commit" : "commits"}</span>
-                <div className="project-activity__week-pulses" aria-hidden="true">
-                  {month.weeks.map((commits, index) => <i key={index} data-level={activityLevel(commits, peak)} />)}
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+              return (
+                <li key={month.startedAt} title={`${monthFormatter.format(monthDate)} ${monthDate.getUTCFullYear()}: ${month.commits} ${month.commits === 1 ? "commit" : "commits"}`}>
+                  <div className="project-activity__month-heading">
+                    <span>{monthFormatter.format(monthDate)}</span>
+                    <time dateTime={month.startedAt}>{monthDate.getUTCFullYear()}</time>
+                  </div>
+                  <div className="project-activity__month-meter" aria-hidden="true">
+                    <i style={{ height: `${fill}%` }} />
+                  </div>
+                  <strong>{month.commits}</strong>
+                  <span className="project-activity__month-unit">{month.commits === 1 ? "commit" : "commits"}</span>
+                  <div className="project-activity__week-pulses" aria-hidden="true">
+                    {month.weeks.map((commits, index) => <i key={index} data-level={activityLevel(commits, peak)} />)}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
 
-        <div className="project-activity__legend" aria-label="Weekly activity key">
-          <span><i data-level="0" />No commits</span>
-          <span><i data-level="1" />Low activity</span>
-          <span><i data-level="2" />Moderate activity</span>
-          <span><i data-level="3" />High activity</span>
+          <div className="project-activity__legend" aria-label="Weekly activity key">
+            <span><i data-level="0" />No commits</span>
+            <span><i data-level="1" />Low activity</span>
+            <span><i data-level="2" />Moderate activity</span>
+            <span><i data-level="3" />High activity</span>
+          </div>
         </div>
+
+        <span className="project-activity__scroll-cue" aria-hidden="true" />
       </div>
 
       <div className="project-activity__footer-rows">

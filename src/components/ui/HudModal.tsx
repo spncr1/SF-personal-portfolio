@@ -12,6 +12,7 @@ interface HudModalProps {
   onClose: () => void;
   children: ReactNode;
   size?: "standard" | "wide";
+  variant?: "default" | "map";
 }
 
 const focusableSelector = [
@@ -30,6 +31,7 @@ export function HudModal({
   onClose,
   children,
   size = "standard",
+  variant = "default",
 }: HudModalProps) {
   const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -116,7 +118,7 @@ export function HudModal({
         onClick={onClose}
       />
 
-      <div className="hud-modal__panel" data-size={size} ref={panelRef} tabIndex={-1}>
+      <div className="hud-modal__panel" data-size={size} data-variant={variant} ref={panelRef} tabIndex={-1}>
         <div className="hud-modal__header">
           <strong>{title}</strong>
           <button ref={closeButtonRef} type="button" onClick={onClose}>

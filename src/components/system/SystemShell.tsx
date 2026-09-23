@@ -21,6 +21,7 @@ export function SystemShell({ children }: SystemShellProps) {
   const sector = getSectorFromPathname(pathname);
   const isHub = sector.id === "hub";
   const [bootState, setBootState] = useState<"checking" | "running" | "complete">("checking");
+  const [mobileNetworkOpen, setMobileNetworkOpen] = useState(false);
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -38,8 +39,18 @@ export function SystemShell({ children }: SystemShellProps) {
     }
   }, [pathname, router]);
 
+  const closeMobileNetwork = useCallback(() => {
+    setMobileNetworkOpen(false);
+  }, [setMobileNetworkOpen]);
+
   return (
-    <div className="system-shell" data-sector={sector.id} data-route={pathname} data-boot={bootState}>
+    <div
+      className="system-shell"
+      data-sector={sector.id}
+      data-route={pathname}
+      data-boot={bootState}
+      data-network-open={!isHub && mobileNetworkOpen ? true : undefined}
+    >
       <div className="system-shell__haze" aria-hidden="true" />
       <div className="system-shell__grid" aria-hidden="true" />
 
@@ -57,6 +68,25 @@ export function SystemShell({ children }: SystemShellProps) {
           </div>
         </dl>
 
+        {!isHub && (
+          <button
+            className="system-shell__mobile-network-trigger"
+            type="button"
+            aria-expanded={mobileNetworkOpen}
+            aria-controls="section-network-dialog"
+            aria-label={
+              mobileNetworkOpen
+                ? "Close section network"
+                : `Open section network. Current section: ${sector.label}`
+            }
+            onClick={() => setMobileNetworkOpen((open) => !open)}
+          >
+            <i aria-hidden="true" />
+            <span>Section</span>
+            <strong>{sectorCodes[sector.id]}</strong>
+          </button>
+        )}
+
         <StatusIndicator status="active" label="Section active" />
       </header>
 
@@ -66,12 +96,20 @@ export function SystemShell({ children }: SystemShellProps) {
             {children}
           </SectorTransition>
         </div>
-        {!isHub && <MiniMap activeSector={sector.id} />}
+        <MiniMap
+          activeSector={sector.id}
+          showCompact={!isHub}
+          mobileOpen={!isHub && mobileNetworkOpen}
+          onMobileClose={closeMobileNetwork}
+        />
       </main>
 
       <footer className="system-shell__footer">
         <span>SYS-2099</span>
-        <span>&copy; 2026 Spencer Fisher // Personal interface</span>
+        <span>
+          &copy; 2026 Spencer Fisher
+          <span className="system-shell__footer-detail">{" // Personal interface"}</span>
+        </span>
       </footer>
 
       {bootState === "running" && <BootSequence onComplete={completeBoot} />}

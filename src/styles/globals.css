@@ -107,7 +107,7 @@ ul {
 }
 
 .system-shell:not([data-sector="hub"]) .sector {
-  padding-bottom: calc(var(--space-xl) + 7rem);
+  padding-bottom: calc(var(--space-xl) + 2.5rem);
 }
 
 @media (min-width: 1080px) {
@@ -884,6 +884,15 @@ ul {
     rgba(var(--rgb-charcoal-deep), 0.32);
 }
 
+.project-activity__chart-shell {
+  position: relative;
+  min-width: 0;
+}
+
+.project-activity__scroll-cue {
+  display: none;
+}
+
 .project-activity__months-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(6.6rem, 1fr));
@@ -1171,6 +1180,10 @@ ul {
 }
 
 @media (max-width: 560px) {
+  .system-shell[data-sector="projects"] .project-record__field:last-child {
+    padding-bottom: 0.5rem;
+  }
+
   .project-systems__masthead h1 {
     font-size: clamp(2rem, 12vw, 3.15rem);
   }
@@ -1199,7 +1212,55 @@ ul {
   }
 
   .project-activity__months-grid {
-    min-width: 38rem;
+    grid-template-columns: repeat(4, minmax(6.6rem, 1fr));
+    min-width: 30rem;
+  }
+
+  .project-activity__scroll-cue {
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 3;
+    display: block;
+    width: 1.65rem;
+    opacity: 0;
+    transition: opacity 160ms ease;
+  }
+
+  .project-activity__chart-shell[data-scroll-cue="left"] .project-activity__scroll-cue {
+    left: 0;
+    background: linear-gradient(
+      90deg,
+      rgba(var(--rgb-neon-gold), 0.38) 0%,
+      rgba(var(--rgb-neon-gold), 0.16) 48%,
+      transparent 100%
+    );
+    opacity: 1;
+  }
+
+  .project-activity__chart-shell[data-scroll-cue="right"] .project-activity__scroll-cue {
+    right: 0;
+    background: linear-gradient(
+      270deg,
+      rgba(var(--rgb-neon-gold), 0.38) 0%,
+      rgba(var(--rgb-neon-gold), 0.16) 48%,
+      transparent 100%
+    );
+    opacity: 1;
+  }
+
+  .project-activity__legend {
+    position: sticky;
+    left: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem 0.75rem;
+    width: 100%;
+  }
+
+  .project-activity__legend span {
+    min-width: 0;
   }
 }
 
@@ -3084,39 +3145,6 @@ ul {
   animation-delay: 1.12s;
 }
 
-@media (max-width: 1120px) {
-  .communications-console__grid {
-    grid-template-areas:
-      "relay relay"
-      "signal channels";
-    grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.82fr);
-    grid-template-rows: auto auto;
-    align-items: start;
-  }
-
-  .communications-console__relay {
-    min-height: clamp(17rem, 30vh, 22rem);
-  }
-
-  .communications-console__channels {
-    min-height: 0;
-  }
-}
-
-@media (max-width: 860px) {
-  .communications-console__grid {
-    grid-template-areas:
-      "relay"
-      "signal"
-      "channels";
-    grid-template-columns: 1fr;
-  }
-
-  .communications-console__channel-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
 @media (max-width: 720px) {
   .sector {
     padding: var(--space-md);
@@ -3135,21 +3163,6 @@ ul {
     grid-template-columns: 1fr;
   }
 
-  .communications-console__grid {
-    grid-template-areas:
-      "relay"
-      "channels";
-    grid-template-columns: 1fr;
-  }
-
-  .communications-console__channel-list {
-    grid-template-columns: 1fr;
-  }
-
-  .communications-console__signal {
-    justify-self: center;
-    width: min(100%, 18rem);
-  }
 }
 
 /* Phase 2 Central Hub */
@@ -4554,16 +4567,6 @@ ul {
 .network-node__icon {
   pointer-events: none;
   opacity: 0.86;
-  filter:
-    brightness(0)
-    saturate(100%)
-    invert(79%)
-    sepia(31%)
-    saturate(485%)
-    hue-rotate(348deg)
-    brightness(99%)
-    contrast(93%)
-    drop-shadow(0 0 4px rgba(var(--rgb-ember), 0.34));
 }
 
 .network-node__code {
@@ -4784,6 +4787,45 @@ ul {
     object-fit: cover;
   }
 
+  .hud-modal__panel[data-variant="map"] {
+    justify-self: center;
+    gap: 0.65rem;
+    width: min(88vw, 23rem);
+    min-width: 0;
+    max-width: 100%;
+    margin-inline: auto;
+    padding: 0.75rem;
+  }
+
+  .hud-modal__panel[data-variant="map"] .hud-modal__header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem;
+  }
+
+  .hud-modal__panel[data-variant="map"] .hud-modal__header strong {
+    font-size: clamp(0.58rem, 2.7vw, 0.68rem);
+  }
+
+  .hud-modal__panel[data-variant="map"] .hud-modal__header button {
+    gap: 0.2rem;
+    min-height: 1.55rem;
+    padding: 0.22rem 0.4rem;
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+  }
+
+  .hud-modal__panel[data-variant="map"] .hud-modal__header button .site-icon {
+    width: 0.8em;
+    height: 0.8em;
+  }
+
+  .hud-modal__panel[data-variant="map"] .central-hub__mapbox-canvas,
+  .hud-modal__panel[data-variant="map"] .central-hub__mapbox-fallback {
+    width: 100%;
+    margin-inline: auto;
+  }
+
   .central-hub__status-stack dl {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.45rem;
@@ -4848,5 +4890,162 @@ ul {
   .central-hub__bottom-anchor {
     justify-self: center;
     text-align: center;
+  }
+
+  /* Keep iOS WebKit out of nested/off-screen filter animations. */
+  .system-shell[data-boot="complete"][data-sector="hub"] .central-hub__rail,
+  .system-shell[data-boot="complete"][data-sector="hub"] .central-hub__rail > *,
+  .system-shell[data-boot="complete"][data-sector="hub"] .central-hub__github-intel > div,
+  .system-shell[data-boot="complete"][data-sector="hub"] .central-hub__language-strip li,
+  .system-shell[data-boot="complete"][data-sector="hub"] .central-hub__clock-card dl > div,
+  .system-shell[data-boot="complete"][data-sector="hub"] .central-hub__map-card > *,
+  .system-shell[data-boot="complete"][data-sector="hub"] .central-hub__bottom-bar {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .system-shell[data-boot="complete"][data-sector="hub"] .central-hub__masthead,
+  .system-shell[data-boot="complete"][data-sector="hub"] .central-hub__intro,
+  .system-shell[data-boot="complete"][data-sector="hub"] .network-map-shell,
+  .system-shell[data-boot="complete"][data-sector="hub"] .network-readout,
+  .system-shell[data-boot="complete"][data-sector="hub"] .network-map-shell__hud,
+  .system-shell[data-boot="complete"][data-sector="hub"] .network-map__field,
+  .system-shell[data-boot="complete"][data-sector="hub"] .network-path,
+  .system-shell[data-boot="complete"][data-sector="hub"] .network-core,
+  .system-shell[data-boot="complete"][data-sector="hub"] .network-node {
+    filter: none !important;
+  }
+}
+
+/*  ===================================
+        COMMUNICATIONS RESPONSIVE DESIGN
+    ===================================
+*/
+
+@media (max-width: 1120px) {
+  .system-shell[data-sector="communications"] .system-shell__content {
+    overflow-x: clip;
+    overflow-y: auto;
+  }
+
+  .system-shell[data-sector="communications"] .system-shell__stage,
+  .system-shell[data-sector="communications"] .sector-transition {
+    height: auto;
+    min-height: 100%;
+  }
+
+  .communications-console {
+    width: 100%;
+    overflow: visible;
+  }
+
+  .communications-console__grid {
+    grid-template-areas:
+      "relay relay"
+      "signal channels";
+    grid-template-columns: minmax(0, 0.8fr) minmax(20rem, 1.2fr);
+    grid-template-rows: auto auto;
+    align-items: start;
+  }
+
+  .communications-console__relay {
+    width: 100%;
+    min-height: clamp(15rem, 28vh, 20rem);
+  }
+
+  .communications-console__signal {
+    align-self: center;
+    width: 100%;
+  }
+
+  .communications-console__channels {
+    width: 100%;
+    min-height: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .system-shell[data-sector="communications"] .system-shell__header {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .system-shell[data-sector="communications"] .system-shell__meta {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .system-shell[data-sector="communications"] .system-shell__header > .status-indicator {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .communications-console {
+    gap: clamp(1rem, 4vw, 1.35rem);
+    padding: clamp(0.75rem, 4vw, 1rem);
+  }
+
+  .communications-console__masthead {
+    width: 100%;
+  }
+
+  .communications-console__grid {
+    grid-template-areas:
+      "relay"
+      "channels"
+      "signal";
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(3, auto);
+    gap: clamp(0.9rem, 4vw, 1.15rem);
+    width: 100%;
+  }
+
+  .communications-console__relay {
+    min-height: 0;
+    padding: clamp(0.9rem, 4vw, 1.1rem);
+  }
+
+  .communications-console__relay strong {
+    font-size: clamp(2rem, 10vw, 2.85rem);
+    line-height: 0.94;
+  }
+
+  .communications-console__relay p {
+    max-width: 32rem;
+    margin-top: 0.85rem;
+    font-size: clamp(0.95rem, 4.6vw, 1.1rem);
+    line-height: 1.5;
+  }
+
+  .communications-console__channels {
+    padding: clamp(0.9rem, 4vw, 1.1rem);
+  }
+
+  .communications-console__channel-list {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.65rem;
+  }
+
+  .communications-console__channel {
+    width: 100%;
+    min-height: 3.4rem;
+    padding: 0.75rem 0.85rem;
+  }
+
+  .communications-console__channel strong {
+    font-size: clamp(0.78rem, 3.8vw, 0.94rem);
+  }
+
+  .communications-console__signal {
+    justify-self: stretch;
+    width: 100%;
+    padding-top: 0;
+  }
+
+  .communications-console__signal-svg {
+    height: clamp(4.5rem, 22vw, 6rem);
   }
 }

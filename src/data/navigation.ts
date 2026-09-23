@@ -63,7 +63,7 @@ export const sectors: SectorNode[] = [
     descriptor: "Builds in progress",
     route: "/operations",
     coordinates: getRayAlignedNodeCoordinates("operations"),
-    icon: "/icons/sectors/active-operations.svg",
+    icon: "/icons/sectors/active-operations.svg?v=2",
   },
   {
     id: "capabilities",
@@ -72,7 +72,7 @@ export const sectors: SectorNode[] = [
     descriptor: "Technical stack",
     route: "/capabilities",
     coordinates: getRayAlignedNodeCoordinates("capabilities"),
-    icon: "/icons/sectors/capabilities.svg",
+    icon: "/icons/sectors/capabilities.svg?v=2",
   },
   {
     id: "communications",
@@ -81,7 +81,7 @@ export const sectors: SectorNode[] = [
     descriptor: "Connect",
     route: "/communications",
     coordinates: getRayAlignedNodeCoordinates("communications"),
-    icon: "/icons/sectors/communications.svg",
+    icon: "/icons/sectors/communications.svg?v=2",
   },
   {
     id: "personnel",
@@ -90,7 +90,7 @@ export const sectors: SectorNode[] = [
     descriptor: "Operator profile",
     route: "/personnel",
     coordinates: getRayAlignedNodeCoordinates("personnel"),
-    icon: "/icons/sectors/personnel.svg",
+    icon: "/icons/sectors/personnel.svg?v=2",
   },
   {
     id: "projects",
@@ -99,7 +99,7 @@ export const sectors: SectorNode[] = [
     descriptor: "Engineering work",
     route: "/projects",
     coordinates: getRayAlignedNodeCoordinates("projects"),
-    icon: "/icons/sectors/project-systems.svg",
+    icon: "/icons/sectors/project-systems.svg?v=2",
   },
 ];
 

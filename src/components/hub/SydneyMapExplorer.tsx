@@ -393,6 +393,7 @@ export function SydneyMapExplorer({ accessToken }: SydneyMapExplorerProps) {
         ariaLabel="Interactive Sydney map"
         onClose={() => setExpanded(false)}
         size="wide"
+        variant="map"
       >
         {accessToken && !mapFailed ? (
           <div className="central-hub__mapbox-canvas" ref={mapContainerRef}>
