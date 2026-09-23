@@ -121,6 +121,7 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
     timeline
       .set(root, { opacity: 1 })
       .set(q(".boot-sequence__status"), { opacity: 0 })
+      .set(q(".boot-sequence__meter-row"), { opacity: 0 })
       .set(q(".startup-hud__central-hud"), { opacity: 0, scale: 0.98, svgOrigin: "0 0" })
       .set(q(".startup-hud__peripheral-hexes, .startup-hud__secondary-hexes, .startup-hud__primary-hexes"), { opacity: 0 })
       .set(q(".startup-hud__branches, .startup-hud__junction-nodes, .startup-hud__glow-elements"), { opacity: 0 })
@@ -147,6 +148,7 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
         { opacity: 1, x: 0, stagger: 0.28, duration: 0.34 },
         "-=0.08",
       )
+      .to(q(".boot-sequence__meter-row"), { opacity: 1, duration: 0.18 })
       .call(() => setStatusLabel("Calibrating..."))
       .to(q(".boot-sequence__status"), { opacity: 1, duration: 0.18 })
       .fromTo(q(".boot-sequence__meter-fill"), { scaleX: 0 }, { scaleX: 1, duration: 2.15, ease: "power1.inOut" }, "-=0.02")

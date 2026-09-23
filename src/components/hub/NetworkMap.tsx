@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { NetworkNode } from "./NetworkNode";
 import { NetworkPath, NetworkStation } from "./NetworkPath";
-import { connections, formatSectorCoordinates, sectorCodes, sectors } from "@/data/navigation";
+import { connections, formatSectorCoordinates, networkNodeRadii, sectorCodes, sectors } from "@/data/navigation";
 import { profile } from "@/data/profile";
 import { hexPoints } from "@/lib/networkGeometry";
 import type { SectorId } from "@/types/navigation";
@@ -16,6 +16,8 @@ export function NetworkMap() {
   const [activeSector, setActiveSector] = useState<SectorId | null>(null);
   const activeNode = sectorNodes.find((sector) => sector.id === activeSector);
   const previewNode = activeNode ?? hub;
+  const portraitRadius = networkNodeRadii.hub - 0.9;
+  const portraitDiameter = portraitRadius * 2;
 
   const updateActiveSector = (sectorId: SectorId | null) => {
     setActiveSector(sectorId);
@@ -52,24 +54,13 @@ export function NetworkMap() {
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
-          <filter id="network-portrait-grade">
-            <feColorMatrix
-              type="matrix"
-              values="0.72 0.18 0.06 0 0.05  0.2 0.68 0.08 0 0.02  0.08 0.12 0.5 0 0  0 0 0 0.86 0"
-            />
-            <feComponentTransfer>
-              <feFuncR type="linear" slope="0.78" intercept="0.03" />
-              <feFuncG type="linear" slope="0.72" intercept="0.02" />
-              <feFuncB type="linear" slope="0.54" />
-            </feComponentTransfer>
-          </filter>
           <linearGradient id="network-path-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="var(--palette-ember)" stopOpacity="0.16" />
             <stop offset="55%" stopColor="var(--palette-gold-soft)" stopOpacity="0.82" />
             <stop offset="100%" stopColor="var(--palette-rust)" stopOpacity="0.28" />
           </linearGradient>
           <clipPath id="network-portrait-clip">
-            <polygon points={hexPoints(0, 0, 15.8)} />
+            <polygon points={hexPoints(0, 0, portraitRadius)} />
           </clipPath>
           <radialGradient id="network-core-aura" cx="50%" cy="45%" r="58%">
             <stop offset="0%" stopColor="var(--palette-gold-soft)" stopOpacity="0.38" />
@@ -87,61 +78,63 @@ export function NetworkMap() {
           ))}
         </g>
 
-        <g className="network-map__paths">
-          {connections.map((conn) => (
-            <NetworkPath
-              key={`${conn.from}-${conn.to}`}
-              connection={conn}
-              active={activeSector === conn.to}
-            />
-          ))}
-        </g>
-
-        {hub && (
-          <g
-            className="network-core"
-            transform={`translate(${hub.coordinates.x * 100}, ${hub.coordinates.y * 100})`}
-          >
-            <circle className="network-core__aura" r="29" />
-            <circle className="network-core__orbit network-core__orbit--outer" r="22.2" />
-            <circle className="network-core__orbit network-core__orbit--inner" r="18.1" />
-            <polygon className="network-core__outer" points={hexPoints(0, 0, 16.7)} />
-            <polygon className="network-core__portrait-backdrop" points={hexPoints(0, 0, 15.8)} />
-            <image
-              className="network-core__portrait"
-              href={profile.portrait}
-              x="-15.9"
-              y="-15.9"
-              width="31.8"
-              height="31.8"
-              preserveAspectRatio="xMidYMid slice"
-              clipPath="url(#network-portrait-clip)"
-            />
-            <polygon className="network-core__portrait-ring" points={hexPoints(0, 0, 15.8)} />
-            <polygon className="network-core__portrait-scan" points={hexPoints(0, 0, 13.7)} />
-            <text className="network-core__label" textAnchor="middle" y="23.2">
-              HUB-00
-            </text>
+        <g className="network-map__topology" transform="translate(0 3.5)">
+          <g className="network-map__paths">
+            {connections.map((conn) => (
+              <NetworkPath
+                key={`${conn.from}-${conn.to}`}
+                connection={conn}
+                active={activeSector === conn.to}
+              />
+            ))}
           </g>
-        )}
 
-        <g className="network-map__nodes">
-          {sectorNodes.map((sector) => (
-            <NetworkNode
-              key={sector.id}
-              sector={sector}
-              active={activeSector === sector.id}
-              onActivate={() => updateActiveSector(sector.id)}
-              onClear={() => updateActiveSector(null)}
-              onNavigate={() => router.push(sector.route)}
-            />
-          ))}
-        </g>
+          {hub && (
+            <g
+              className="network-core"
+              transform={`translate(${hub.coordinates.x * 100}, ${hub.coordinates.y * 100})`}
+            >
+              <circle className="network-core__aura" r="31.5" />
+              <circle className="network-core__orbit network-core__orbit--outer" r="24.5" />
+              <circle className="network-core__orbit network-core__orbit--inner" r="20.2" />
+              <polygon className="network-core__outer" points={hexPoints(0, 0, networkNodeRadii.hub)} />
+              <polygon className="network-core__portrait-backdrop" points={hexPoints(0, 0, portraitRadius)} />
+              <image
+                className="network-core__portrait"
+                href={profile.portrait}
+                x={-portraitDiameter / 2 + 0.9}
+                y={-portraitDiameter / 2}
+                width={portraitDiameter}
+                height={portraitDiameter}
+                preserveAspectRatio="xMidYMid slice"
+                clipPath="url(#network-portrait-clip)"
+              />
+              <polygon className="network-core__portrait-ring" points={hexPoints(0, 0, portraitRadius)} />
+              <polygon className="network-core__portrait-scan" points={hexPoints(0, 0, portraitRadius - 2.1)} />
+              <text className="network-core__label" textAnchor="middle" y="24.8">
+                HUB-00
+              </text>
+            </g>
+          )}
 
-        <g className="network-map__stations" aria-hidden="true">
-          {connections.map((conn) => (
-            <NetworkStation key={`${conn.from}-${conn.to}-station`} connection={conn} />
-          ))}
+          <g className="network-map__nodes">
+            {sectorNodes.map((sector) => (
+              <NetworkNode
+                key={sector.id}
+                sector={sector}
+                active={activeSector === sector.id}
+                onActivate={() => updateActiveSector(sector.id)}
+                onClear={() => updateActiveSector(null)}
+                onNavigate={() => router.push(sector.route)}
+              />
+            ))}
+          </g>
+
+          <g className="network-map__stations" aria-hidden="true">
+            {connections.map((conn) => (
+              <NetworkStation key={`${conn.from}-${conn.to}-station`} connection={conn} />
+            ))}
+          </g>
         </g>
       </svg>
 

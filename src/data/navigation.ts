@@ -4,7 +4,7 @@ import { getHexCornerPoint, type HexCorner, type NetworkPoint } from "@/lib/netw
 type OuterSectorId = Exclude<SectorId, "hub">;
 
 export const networkNodeRadii = {
-  hub: 16.7,
+  hub: 18.2,
   node: 7.85,
 } as const;
 
@@ -18,7 +18,7 @@ export const hubConnectionAnchors: Record<OuterSectorId, { from: HexCorner; to: 
 
 const hubCoordinates = { x: 0.5, y: 0.53 };
 const hubPoint = toNetworkPoint(hubCoordinates);
-const nodeDistanceFromHubCorner = 15;
+const nodeDistanceFromHubCorner = 16.5;
 
 export const sectorCodes: Record<SectorId, string> = {
   hub: "HUB-00",

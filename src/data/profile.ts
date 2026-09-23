@@ -105,7 +105,7 @@ export const profile: Profile = {
       code: "PERSONAL INTEREST // 01",
       name: "Football",
       description:
-        "I enjoy football for its tactical detail, competitive energy, and the community that surrounds the game.",
+        "I enjoy football for its tactical detail, competitive energy, and the community that surrounds the game. I am an avid Man City supporter.",
       icon: "football",
     },
     {
@@ -129,7 +129,7 @@ export const profile: Profile = {
       code: "PERSONAL INTEREST // 04",
       name: "Drawing",
       description:
-        "Drawing provides a hands-on creative outlet and helps me explore ideas visually outside software.",
+        "Drawing provides a hands-on creative outlet and helps me express myself visually outside of software. I'd definitely consider myself a creative person.",
       icon: "drawing",
     },
   ],

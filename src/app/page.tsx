@@ -16,8 +16,6 @@ export default function CentralHubPage() {
   return (
     <section className="central-hub">
       <div className="central-hub__main" data-system-load>
-        <div className="central-hub__masthead" data-system-load></div>
-
         <header className="central-hub__intro" data-system-load>
           <h1>WELCOME TO SPENCER FISHER&apos;S DIGITAL CORNER OF THE WORLD</h1>
           <span>Software Engineer • Builder • Problem Solver</span>

@@ -10,7 +10,7 @@ interface PersonnelPortraitProps {
   portrait: string;
 }
 
-const interestTerminalCells = new Set(["6,-2", "5,0", "3,2", "1,4"]);
+const interestTerminalCells = new Set(["5,-1", "4,1", "2,3", "0,5"]);
 
 function getTopologyLayer(radius: number): StartupHudHexLayer {
   if (radius > 126) return "peripheral";

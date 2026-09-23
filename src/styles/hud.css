@@ -1281,6 +1281,10 @@
   margin-top: var(--space-sm);
 }
 
+.boot-sequence .boot-sequence__meter-row {
+  opacity: 0;
+}
+
 .boot-sequence__meter {
   position: relative;
   height: 0.35rem;
@@ -1359,12 +1363,7 @@
 }
 
 .personnel-gate::before {
-  inset: 1.25rem;
-  z-index: 1;
-  border: 1px solid rgba(var(--rgb-gold-soft), 0.12);
-  box-shadow:
-    inset 0 0 58px rgba(var(--rgb-gold-soft), 0.035),
-    0 0 48px rgba(var(--rgb-gold-soft), 0.05);
+  display: none;
 }
 
 .personnel-gate::after {
@@ -1919,7 +1918,9 @@
 
 @media (max-width: 720px) {
   .system-shell[data-sector="hub"] {
-    grid-template-rows: 0 minmax(0, 1fr) 0;
+    grid-template-rows: 0 auto 0;
+    height: auto;
+    overflow: visible;
   }
 
   .system-shell[data-sector="hub"] .system-shell__header {
@@ -1928,6 +1929,19 @@
 
   .system-shell[data-sector="hub"] .system-shell__content {
     grid-row: 2;
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .system-shell[data-sector="hub"] .system-shell__stage {
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  .project-systems__unlock {
+    position: relative;
+    top: -7rem;
   }
 
   .system-shell__meta {

@@ -56,7 +56,10 @@ export function PersonnelRecord() {
               <p>{profile.summary}</p>
             </section>
 
-            <section className="personnel-record__section personnel-record__service-log">
+            <section
+              className="personnel-record__section personnel-record__service-log"
+              id="personnel-service-log"
+            >
               <SystemLabel variant="secondary">Service Log</SystemLabel>
               <ol className="personnel-record__service-list" aria-label="Service log">
                 {profile.serviceLog.map((entry, index) => (
@@ -107,11 +110,25 @@ export function PersonnelRecord() {
               ) : null}
             </div>
 
-            <section className="personnel-record__section personnel-record__career-direction">
+            <section
+              className="personnel-record__section personnel-record__career-direction"
+              id="personnel-career-direction"
+            >
               <SystemLabel variant="secondary">Career Direction</SystemLabel>
               <p>{profile.careerDirection}</p>
             </section>
           </div>
+
+          <nav className="personnel-record__mobile-section-nav" aria-label="Personnel file sections">
+            <a href="#personnel-career-direction">
+              <span>Career Direction</span>
+              <span aria-hidden="true">↓</span>
+            </a>
+            <a href="#personnel-service-log">
+              <span>Service Log</span>
+              <span aria-hidden="true">↓</span>
+            </a>
+          </nav>
         </div>
       </div>
 
