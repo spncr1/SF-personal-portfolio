@@ -6,6 +6,7 @@ import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 
 import { RecordRevealEmblem } from "@/components/system/RecordRevealEmblem";
+import { HudModal } from "@/components/ui/HudModal";
 import { SystemLabel } from "@/components/ui/SystemLabel";
 import { SiteIcon } from "@/components/ui/SiteIcon";
 import { activeOperations, type ActiveOperation } from "@/data/operations";
@@ -55,6 +56,13 @@ function getTetherPaths(endpoints: TetherEndpoint[]) {
 
 const nodeRevealDelays = [1.6, 1.8, 1.9, 2, 2.2];
 
+const mobileTetherSegments = [
+  { path: "M 44 0 L 50 50 L 56 100", nodes: [0, 1] },
+  { path: "M 56 0 L 50 50 L 48 100", nodes: [1, 2] },
+  { path: "M 48 0 L 50 50 L 56 100", nodes: [2, 3] },
+  { path: "M 56 0 L 50 50 L 46 100", nodes: [3, 4] },
+] as const;
+
 function getRepositoryActivity(
   activity: GitHubOperationsActivity | null,
   operation: ActiveOperation,
@@ -67,6 +75,7 @@ export function ActiveOperations() {
   const [activityState, setActivityState] = useState<ActivityLoadState>("loading");
   const [activity, setActivity] = useState<GitHubOperationsActivity | null>(null);
   const [activeNodeIndex, setActiveNodeIndex] = useState<number | null>(null);
+  const [visualFeedOpen, setVisualFeedOpen] = useState(false);
   const [tetherEndpoints, setTetherEndpoints] = useState(initialTetherEndpoints);
   const stageRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = Boolean(useReducedMotion());
@@ -195,6 +204,15 @@ export function ActiveOperations() {
               }}
               onKeyDown={(event) => handleTabKeyDown(event, index)}
             >
+              <Image
+                className="operations-live__tab-logo"
+                data-project={operation.id}
+                src={operation.logo.src}
+                alt=""
+                width={operation.logo.width}
+                height={operation.logo.height}
+                aria-hidden="true"
+              />
               <span>{operation.code}</span>
               {operation.name}
             </button>
@@ -253,6 +271,25 @@ export function ActiveOperations() {
           ))}
         </svg>
 
+        {mobileTetherSegments.map((segment, index) => (
+          <svg
+            className="operations-live__mobile-link"
+            data-active={
+              activeNodeIndex !== null &&
+              segment.nodes.some((nodeIndex) => nodeIndex === activeNodeIndex)
+            }
+            data-link={index}
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+            key={segment.path}
+            style={{ "--operations-reveal-delay": `${1860 + index * 120}ms` } as CSSProperties}
+          >
+            <path className="operations-live__mobile-link-base" d={segment.path} />
+            <path className="operations-live__mobile-link-signal" d={segment.path} />
+          </svg>
+        ))}
+
         {operationNodes.map((node, index) => {
           const revealDelay = nodeRevealDelays[index];
 
@@ -285,6 +322,7 @@ export function ActiveOperations() {
                     operation={selectedOperation}
                     activityState={activityState}
                     repositoryActivity={repositoryActivity}
+                    onOpenVisualFeed={() => setVisualFeedOpen(true)}
                   />
                 </div>
               </div>
@@ -292,6 +330,26 @@ export function ActiveOperations() {
           );
         })}
       </div>
+
+      <HudModal
+        open={visualFeedOpen}
+        title={`${selectedOperation.name} // Visual feed`}
+        ariaLabel={`${selectedOperation.name} enhanced visual feed`}
+        onClose={() => setVisualFeedOpen(false)}
+        size="wide"
+        variant="visual-feed"
+      >
+        <figure className="operations-live__visual-modal">
+          <Image
+            src={selectedOperation.screenshot}
+            alt={`${selectedOperation.name} interface enlarged`}
+            width={2880}
+            height={1554}
+            sizes="94vw"
+            priority
+          />
+        </figure>
+      </HudModal>
     </section>
   );
 }
@@ -301,11 +359,13 @@ function OperationNodeContent({
   operation,
   activityState,
   repositoryActivity,
+  onOpenVisualFeed,
 }: {
   node: OperationNodeKind;
   operation: ActiveOperation;
   activityState: ActivityLoadState;
   repositoryActivity: GitHubRepositoryActivity | null;
+  onOpenVisualFeed: () => void;
 }) {
   if (node === "status") {
     return <strong className="operations-live__status">{operation.status}</strong>;
@@ -321,13 +381,21 @@ function OperationNodeContent({
 
   if (node === "screenshot") {
     return (
-      <Image
-        className="operations-live__screenshot"
-        src={operation.screenshot}
-        alt={`${operation.name} interface`}
-        width={300}
-        height={180}
-      />
+      <button
+        className="operations-live__visual-trigger"
+        type="button"
+        aria-haspopup="dialog"
+        aria-label={`Open enhanced ${operation.name} visual feed`}
+        onClick={onOpenVisualFeed}
+      >
+        <Image
+          className="operations-live__screenshot"
+          src={operation.screenshot}
+          alt={`${operation.name} interface`}
+          width={300}
+          height={180}
+        />
+      </button>
     );
   }
 

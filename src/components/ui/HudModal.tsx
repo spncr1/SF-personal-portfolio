@@ -12,7 +12,7 @@ interface HudModalProps {
   onClose: () => void;
   children: ReactNode;
   size?: "standard" | "wide";
-  variant?: "default" | "map";
+  variant?: "default" | "map" | "visual-feed";
 }
 
 const focusableSelector = [
