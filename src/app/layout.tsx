@@ -5,6 +5,7 @@ import "@/styles/globals.css";
 import "@/styles/animations.css";
 import "@/styles/hud.css";
 import { SystemShell } from "@/components/system/SystemShell";
+import { Analytics } from "@vercel/analytics/next"
 
 const exo = Exo_2({
   subsets: ["latin"],
