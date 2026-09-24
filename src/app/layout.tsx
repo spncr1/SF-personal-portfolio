@@ -5,7 +5,7 @@ import "@/styles/globals.css";
 import "@/styles/animations.css";
 import "@/styles/hud.css";
 import { SystemShell } from "@/components/system/SystemShell";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react"
 
 const exo = Exo_2({
   subsets: ["latin"],
@@ -29,6 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${exo.variable} ${jetbrains.variable}`}>
       <body>
         <SystemShell>{children}</SystemShell>
+        <Analytics />
       </body>
     </html>
   );
