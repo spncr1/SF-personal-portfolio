@@ -68,7 +68,7 @@ export function PersonnelRecord() {
                     <div className="personnel-record__service-entry">
                       <div className="personnel-record__service-meta">
                         <span>LOG {String(index + 1).padStart(3, "0")}</span>
-                        <span aria-hidden="true">·</span>
+                        <span aria-hidden="true">-</span>
                         <time>{entry.date}</time>
                       </div>
                       <h3>{entry.title}</h3>

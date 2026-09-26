@@ -100,22 +100,34 @@ function ProjectIcon({ project }: { project: string }) {
 
 function SystemDiagram() {
   return (
-    <svg className="capabilities-matrix__system-diagram-svg" viewBox="0 0 220 150" aria-hidden="true" focusable="false">
-      <rect className="capabilities-matrix__system-diagram-node" x="16" y="18" width="36" height="24" rx="3" />
-      <path className="capabilities-matrix__system-diagram-node" d="M16 34h36" />
-      <path className="capabilities-matrix__system-diagram-node" d="M30 42v6" />
-      <path className="capabilities-matrix__system-diagram-node" d="M24 48h12" />
+    <svg className="capabilities-matrix__system-diagram-svg" viewBox="0 0 260 176" aria-hidden="true" focusable="false">
+      <circle className="capabilities-matrix__system-diagram-orbit" cx="130" cy="88" r="57" />
+      <circle className="capabilities-matrix__system-diagram-orbit capabilities-matrix__system-diagram-orbit--inner" cx="130" cy="88" r="41" />
 
-      <path className="capabilities-matrix__system-diagram-link" d="M54 36l44 28" />
-      <path className="capabilities-matrix__system-diagram-link" d="M92 59l8 5-3 8" />
+      <path className="capabilities-matrix__system-diagram-link" d="M74 52H42v20" />
+      <path className="capabilities-matrix__system-diagram-link" d="M186 52h32v20" />
+      <path className="capabilities-matrix__system-diagram-link" d="M82 126H46v-20" />
+      <path className="capabilities-matrix__system-diagram-link" d="M178 126h36v-20" />
 
-      <path className="capabilities-matrix__system-diagram-node capabilities-matrix__system-diagram-node--accent" d="M115 55l18 10v20l-18 10-18-10V65z" />
+      <g className="capabilities-matrix__system-diagram-server">
+        <rect className="capabilities-matrix__system-diagram-node" x="20" y="71" width="44" height="34" rx="3" />
+        <path className="capabilities-matrix__system-diagram-node" d="M20 82h44M20 94h44" />
+        <circle className="capabilities-matrix__system-diagram-status" cx="28" cy="77" r="1.8" />
+        <circle className="capabilities-matrix__system-diagram-status" cx="28" cy="88" r="1.8" />
+        <circle className="capabilities-matrix__system-diagram-status" cx="28" cy="100" r="1.8" />
+      </g>
 
-      <path className="capabilities-matrix__system-diagram-link" d="M133 85l36 22" />
-      <path className="capabilities-matrix__system-diagram-link" d="M162 102l8 5-3 8" />
+      <path className="capabilities-matrix__system-diagram-node capabilities-matrix__system-diagram-node--accent" d="M130 54l29 17v34l-29 17-29-17V71z" />
+      <path className="capabilities-matrix__system-diagram-glyph" d="M119 80l-9 8 9 8M141 80l9 8-9 8M135 73l-10 30" />
 
-      <ellipse className="capabilities-matrix__system-diagram-node" cx="195" cy="112" rx="17" ry="6" />
-      <path className="capabilities-matrix__system-diagram-node" d="M178 112v16c0 3.3 7.6 6 17 6s17-2.7 17-6v-16" />
+      <g className="capabilities-matrix__system-diagram-database">
+        <ellipse className="capabilities-matrix__system-diagram-node" cx="224" cy="76" rx="18" ry="6" />
+        <path className="capabilities-matrix__system-diagram-node" d="M206 76v25c0 3.4 8.1 6 18 6s18-2.6 18-6V76M206 88c0 3.4 8.1 6 18 6s18-2.6 18-6" />
+      </g>
+
+      <circle className="capabilities-matrix__system-diagram-packet" cx="74" cy="52" r="3" />
+      <circle className="capabilities-matrix__system-diagram-packet capabilities-matrix__system-diagram-packet--late" cx="186" cy="52" r="3" />
+      <text className="capabilities-matrix__system-diagram-label" x="130" y="155" textAnchor="middle">API / DATA / SERVICES</text>
     </svg>
   );
 }

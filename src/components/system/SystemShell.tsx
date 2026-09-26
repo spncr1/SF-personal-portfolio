@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { formatSectorCoordinates, getSectorFromPathname, sectorCodes } from "@/data/navigation";
 import { BootSequence } from "./BootSequence";
 import { MiniMap } from "./MiniMap";
@@ -15,8 +15,24 @@ interface SystemShellProps {
 
 const BOOT_SESSION_KEY = "sf-ops-boot-complete";
 
+function hasCompletedBoot() {
+  try {
+    return window.sessionStorage.getItem(BOOT_SESSION_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function rememberCompletedBoot() {
+  try {
+    window.sessionStorage.setItem(BOOT_SESSION_KEY, "true");
+  } catch {
+    // Storage can be unavailable in restricted browser contexts. Boot completion
+    // must still be allowed and must never affect the current route.
+  }
+}
+
 export function SystemShell({ children }: SystemShellProps) {
-  const router = useRouter();
   const pathname = usePathname();
   const sector = getSectorFromPathname(pathname);
   const isHub = sector.id === "hub";
@@ -24,20 +40,29 @@ export function SystemShell({ children }: SystemShellProps) {
   const [mobileNetworkOpen, setMobileNetworkOpen] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+
     queueMicrotask(() => {
-      const bootComplete = window.sessionStorage.getItem(BOOT_SESSION_KEY) === "true";
-      setBootState(bootComplete ? "complete" : "running");
+      if (cancelled) return;
+
+      if (pathname !== "/") {
+        rememberCompletedBoot();
+        setBootState("complete");
+        return;
+      }
+
+      setBootState(hasCompletedBoot() ? "complete" : "running");
     });
-  }, []);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pathname]);
 
   const completeBoot = useCallback(() => {
-    window.sessionStorage.setItem(BOOT_SESSION_KEY, "true");
+    rememberCompletedBoot();
     setBootState("complete");
-
-    if (pathname !== "/") {
-      router.replace("/");
-    }
-  }, [pathname, router]);
+  }, []);
 
   const closeMobileNetwork = useCallback(() => {
     setMobileNetworkOpen(false);

@@ -57,8 +57,24 @@ export default function CommunicationsPage() {
 
       <div className="communications-console__grid">
         <HudPanel className="sector-frame__primary communications-console__relay" label="Comms Online" tone="diagnostic">
-          <strong>Ready To Connect</strong>
-          <p>Get in touch with me via email, phone, LinkedIn, GitHub, or download my resume.</p>
+          <div className="communications-console__relay-copy">
+            <strong>Ready To Connect</strong>
+            <p>Get in touch with me via email, phone, LinkedIn, GitHub, or download my resume.</p>
+          </div>
+          <dl className="communications-console__relay-readout" aria-label="Communications status">
+            <div>
+              <dt>Signal</dt>
+              <dd>Online</dd>
+            </div>
+            <div>
+              <dt>Channels</dt>
+              <dd>{String(channels.length).padStart(2, "0")} available</dd>
+            </div>
+            <div>
+              <dt>Route</dt>
+              <dd>Direct</dd>
+            </div>
+          </dl>
         </HudPanel>
 
         <div className="communications-console__signal" aria-hidden="true">

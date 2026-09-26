@@ -34,6 +34,11 @@ interface TetherEndpoint {
   y: number;
 }
 
+interface TetherLayout {
+  anchors: TetherEndpoint[];
+  endpoints: TetherEndpoint[];
+}
+
 const initialTetherEndpoints: TetherEndpoint[] = [
   { x: 208, y: 118 },
   { x: 747, y: 22 },
@@ -42,15 +47,24 @@ const initialTetherEndpoints: TetherEndpoint[] = [
   { x: 430, y: 484 },
 ];
 
-function getTetherPaths(endpoints: TetherEndpoint[]) {
+const initialTetherAnchors: TetherEndpoint[] = [
+  { x: 468, y: 277 },
+  { x: 531, y: 276 },
+  { x: 540, y: 322 },
+  { x: 458, y: 326 },
+  { x: 497, y: 348 },
+];
+
+function getTetherPaths({ anchors, endpoints }: TetherLayout) {
   const [status, phase, screenshot, thinking, github] = endpoints;
+  const [statusAnchor, phaseAnchor, screenshotAnchor, thinkingAnchor, githubAnchor] = anchors;
 
   return [
-    `M 468 277 L 365 194 L ${status.x + 52} 194 L ${status.x} ${status.y}`,
-    `M 531 276 L 624 184 L ${phase.x - 47} ${phase.y} L ${phase.x} ${phase.y}`,
-    `M 540 322 L 640 336 L ${screenshot.x - 15} ${screenshot.y} L ${screenshot.x} ${screenshot.y}`,
-    `M 458 326 L 356 372 L ${thinking.x + 63} ${thinking.y} L ${thinking.x} ${thinking.y}`,
-    `M 497 348 L 497 430 L ${github.x} ${github.y}`,
+    `M ${statusAnchor.x} ${statusAnchor.y} L ${statusAnchor.x + (status.x - statusAnchor.x) * 0.4} ${statusAnchor.y + (status.y - statusAnchor.y) * 0.52} L ${status.x + 52} ${statusAnchor.y + (status.y - statusAnchor.y) * 0.52} L ${status.x} ${status.y}`,
+    `M ${phaseAnchor.x} ${phaseAnchor.y} L ${phaseAnchor.x + (phase.x - phaseAnchor.x) * 0.43} ${phaseAnchor.y + (phase.y - phaseAnchor.y) * 0.43} L ${phase.x - 47} ${phase.y} L ${phase.x} ${phase.y}`,
+    `M ${screenshotAnchor.x} ${screenshotAnchor.y} L ${screenshotAnchor.x + (screenshot.x - screenshotAnchor.x) * 0.42} ${screenshotAnchor.y + 14} L ${screenshot.x - 15} ${screenshot.y} L ${screenshot.x} ${screenshot.y}`,
+    `M ${thinkingAnchor.x} ${thinkingAnchor.y} L ${thinkingAnchor.x + (thinking.x - thinkingAnchor.x) * 0.42} ${thinking.y - 12} L ${thinking.x + 63} ${thinking.y} L ${thinking.x} ${thinking.y}`,
+    `M ${githubAnchor.x} ${githubAnchor.y} L ${githubAnchor.x} ${githubAnchor.y + (github.y - githubAnchor.y) * 0.58} L ${github.x} ${github.y}`,
   ];
 }
 
@@ -76,7 +90,10 @@ export function ActiveOperations() {
   const [activity, setActivity] = useState<GitHubOperationsActivity | null>(null);
   const [activeNodeIndex, setActiveNodeIndex] = useState<number | null>(null);
   const [visualFeedOpen, setVisualFeedOpen] = useState(false);
-  const [tetherEndpoints, setTetherEndpoints] = useState(initialTetherEndpoints);
+  const [tetherLayout, setTetherLayout] = useState<TetherLayout>({
+    anchors: initialTetherAnchors,
+    endpoints: initialTetherEndpoints,
+  });
   const stageRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = Boolean(useReducedMotion());
   const tabIdPrefix = useId();
@@ -117,11 +134,14 @@ export function ActiveOperations() {
     const nodes = operationNodes.map((node) =>
       stage.querySelector<HTMLElement>(`.operations-live__node[data-node="${node.kind}"]`),
     );
+    const emblem = stage.querySelector<HTMLElement>(".operations-live__emblem");
 
-    function measureEndpoints() {
+    function measureTethers() {
       if (!stage) return;
       const stageRect = stage.getBoundingClientRect();
       if (!stageRect.width || !stageRect.height) return;
+      const scaleX = 1000 / stageRect.width;
+      const scaleY = 620 / stageRect.height;
 
       const nextEndpoints = nodes.map((node, index) => {
         if (!node) return initialTetherEndpoints[index];
@@ -131,25 +151,42 @@ export function ActiveOperations() {
         const useBottomEdge = kind === "status";
 
         return {
-          x: ((useRightEdge ? rect.right : rect.left) - stageRect.left) * (1000 / stageRect.width),
-          y: ((useBottomEdge ? rect.bottom : rect.top) - stageRect.top) * (620 / stageRect.height),
+          x: ((useRightEdge ? rect.right : rect.left) - stageRect.left) * scaleX,
+          y: ((useBottomEdge ? rect.bottom : rect.top) - stageRect.top) * scaleY,
         };
       });
 
-      setTetherEndpoints((currentEndpoints) =>
-        nextEndpoints.every(
-          (endpoint, index) =>
-            Math.abs(endpoint.x - currentEndpoints[index].x) < 0.1 &&
-            Math.abs(endpoint.y - currentEndpoints[index].y) < 0.1,
-        )
-          ? currentEndpoints
-          : nextEndpoints,
-      );
+      const nextAnchors = (() => {
+        if (!emblem) return initialTetherAnchors;
+        const rect = emblem.getBoundingClientRect();
+        const left = (rect.left - stageRect.left) * scaleX;
+        const top = (rect.top - stageRect.top) * scaleY;
+        const width = rect.width * scaleX;
+        const height = rect.height * scaleY;
+
+        return [
+          { x: left + width * 0.32, y: top + height * 0.39 },
+          { x: left + width * 0.68, y: top + height * 0.39 },
+          { x: left + width * 0.75, y: top + height * 0.62 },
+          { x: left + width * 0.25, y: top + height * 0.64 },
+          { x: left + width * 0.5, y: top + height * 0.84 },
+        ];
+      })();
+
+      setTetherLayout((currentLayout) => {
+        const unchanged = [...nextAnchors, ...nextEndpoints].every((point, index) => {
+          const currentPoint = [...currentLayout.anchors, ...currentLayout.endpoints][index];
+          return Math.abs(point.x - currentPoint.x) < 0.1 && Math.abs(point.y - currentPoint.y) < 0.1;
+        });
+
+        return unchanged ? currentLayout : { anchors: nextAnchors, endpoints: nextEndpoints };
+      });
     }
 
-    measureEndpoints();
-    const resizeObserver = new ResizeObserver(measureEndpoints);
+    measureTethers();
+    const resizeObserver = new ResizeObserver(measureTethers);
     resizeObserver.observe(stage);
+    if (emblem) resizeObserver.observe(emblem);
     nodes.forEach((node) => {
       if (node) resizeObserver.observe(node);
     });
@@ -253,7 +290,7 @@ export function ActiveOperations() {
               <stop offset="100%" stopColor="var(--palette-rust)" stopOpacity="0.28" />
             </linearGradient>
           </defs>
-          {getTetherPaths(tetherEndpoints).map((path, index) => (
+          {getTetherPaths(tetherLayout).map((path, index) => (
             <g
               className="operations-live__tether"
               data-active={activeNodeIndex === index}
@@ -272,22 +309,28 @@ export function ActiveOperations() {
         </svg>
 
         {mobileTetherSegments.map((segment, index) => (
-          <svg
+          <div
             className="operations-live__mobile-link"
             data-active={
               activeNodeIndex !== null &&
               segment.nodes.some((nodeIndex) => nodeIndex === activeNodeIndex)
             }
             data-link={index}
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
             aria-hidden="true"
             key={segment.path}
             style={{ "--operations-reveal-delay": `${1860 + index * 120}ms` } as CSSProperties}
           >
-            <path className="operations-live__mobile-link-base" d={segment.path} />
-            <path className="operations-live__mobile-link-signal" d={segment.path} />
-          </svg>
+            <svg
+              className="operations-live__mobile-link-svg"
+              width="100"
+              height="100"
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+            >
+              <path className="operations-live__mobile-link-base" d={segment.path} />
+              <path className="operations-live__mobile-link-signal" d={segment.path} />
+            </svg>
+          </div>
         ))}
 
         {operationNodes.map((node, index) => {

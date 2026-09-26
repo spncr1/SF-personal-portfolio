@@ -1890,6 +1890,11 @@ ul {
     flex: 0 0 auto;
   }
 
+  .operations-live__tab::after {
+    bottom: 0;
+    height: 2px;
+  }
+
   .operations-live__stage {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1942,11 +1947,11 @@ ul {
 
   .operations-live__stage {
     grid-template-rows:
-      auto 2.75rem
-      auto 2.75rem
-      auto 2.75rem
-      auto 2.75rem
-      auto 2.75rem
+      auto minmax(0, 2.75rem)
+      auto minmax(0, 2.75rem)
+      auto minmax(0, 2.75rem)
+      auto minmax(0, 2.75rem)
+      auto minmax(0, 2.75rem)
       auto;
     grid-template-columns: 1fr;
     gap: 0;
@@ -1997,14 +2002,27 @@ ul {
   }
 
   .operations-live__mobile-link {
+    position: relative;
     display: block;
     grid-column: 1;
     align-self: stretch;
+    min-width: 0;
+    min-height: 0;
+    width: 100%;
+    height: 2.75rem;
+    overflow: visible;
+    pointer-events: none;
+    contain: layout size;
+    animation: hub-route-draw 720ms ease-out var(--operations-reveal-delay) both;
+  }
+
+  .operations-live__mobile-link-svg {
+    position: absolute;
+    inset: 0;
+    display: block;
     width: 100%;
     height: 100%;
     overflow: visible;
-    pointer-events: none;
-    animation: hub-route-draw 720ms ease-out var(--operations-reveal-delay) both;
   }
 
   .operations-live__mobile-link[data-link="0"] {
@@ -2846,7 +2864,7 @@ ul {
       "direction"
       "service";
     grid-template-columns: minmax(0, 1fr);
-    row-gap: clamp(1.75rem, 7vw, 2.5rem);
+    row-gap: clamp(1.25rem, 4.5vw, 1.75rem);
   }
 
   .personnel-record__column {
@@ -2860,7 +2878,7 @@ ul {
 
   .personnel-record__visual {
     width: 100%;
-    min-height: 21.5rem;
+    min-height: 20rem;
     padding-top: 0;
   }
 
@@ -2869,6 +2887,7 @@ ul {
     grid-area: section-nav;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.65rem;
+    margin-top: -0.5rem;
   }
 
   .personnel-record__mobile-section-nav a {
@@ -3026,6 +3045,12 @@ ul {
   overflow: hidden;
 }
 
+@media (min-width: 901px) {
+  .capabilities-matrix__overview {
+    padding-right: clamp(15rem, 24vw, 20rem);
+  }
+}
+
 .capabilities-matrix__overview strong {
   font-size: clamp(2rem, 4vw, 3.6rem);
 }
@@ -3038,9 +3063,9 @@ ul {
   position: absolute;
   top: 50%;
   right: var(--space-lg);
-  width: clamp(9rem, 15vw, 13rem);
+  width: clamp(11rem, 17vw, 15rem);
   transform: translateY(-50%);
-  opacity: 0.85;
+  opacity: 0.92;
   pointer-events: none;
 }
 
@@ -3061,6 +3086,19 @@ ul {
   filter: drop-shadow(0 0 7px rgba(var(--rgb-neon-ember), 0.24));
 }
 
+.capabilities-matrix__system-diagram-orbit {
+  fill: none;
+  stroke: rgba(var(--rgb-gold-soft), 0.18);
+  stroke-width: 1;
+  stroke-dasharray: 3 5;
+  vector-effect: non-scaling-stroke;
+}
+
+.capabilities-matrix__system-diagram-orbit--inner {
+  stroke: rgba(var(--rgb-ember), 0.22);
+  stroke-dasharray: none;
+}
+
 .capabilities-matrix__system-diagram-node--accent {
   stroke: rgba(var(--rgb-neon-ember), 0.78);
 }
@@ -3072,6 +3110,47 @@ ul {
   stroke-linecap: round;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
+}
+
+.capabilities-matrix__system-diagram-glyph {
+  fill: none;
+  stroke: rgba(var(--rgb-gold-soft), 0.9);
+  stroke-width: 1.55;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.capabilities-matrix__system-diagram-status,
+.capabilities-matrix__system-diagram-packet {
+  fill: var(--color-secondary);
+  filter: drop-shadow(0 0 5px rgba(var(--rgb-gold-soft), 0.55));
+}
+
+.capabilities-matrix__system-diagram-packet {
+  animation: capabilities-packet-pulse 2.4s ease-in-out infinite;
+}
+
+.capabilities-matrix__system-diagram-packet--late {
+  animation-delay: 1.2s;
+}
+
+.capabilities-matrix__system-diagram-label {
+  fill: rgba(var(--rgb-gold-soft), 0.66);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.18em;
+}
+
+@keyframes capabilities-packet-pulse {
+  0%,
+  100% {
+    opacity: 0.38;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 @media (max-width: 900px) {
@@ -3272,6 +3351,10 @@ ul {
 
 .communications-console__relay {
   grid-area: relay;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(2rem, 5vh, 4rem);
   min-height: clamp(18rem, 32vh, 24rem);
   overflow: hidden;
 }
@@ -3287,6 +3370,45 @@ ul {
 
 .communications-console__relay strong {
   font-size: clamp(2rem, 4vw, 3.6rem);
+}
+
+.communications-console__relay-copy p {
+  max-width: 40rem;
+}
+
+.communications-console__relay-readout {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  border-block: 1px solid rgba(var(--rgb-ember), 0.24);
+  background: rgba(var(--rgb-ember), 0.18);
+}
+
+.communications-console__relay-readout > div {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+  padding: 0.8rem clamp(0.65rem, 1.2vw, 1rem);
+  background: rgba(var(--rgb-charcoal-deep), 0.84);
+}
+
+.communications-console__relay-readout dt,
+.communications-console__relay-readout dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(0.58rem, 0.7vw, 0.68rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.communications-console__relay-readout dt {
+  color: var(--color-text-faint);
+}
+
+.communications-console__relay-readout dd {
+  overflow-wrap: anywhere;
+  color: var(--color-accent);
 }
 
 .communications-console__channels {
@@ -5332,6 +5454,16 @@ ul {
   .communications-console__relay {
     min-height: 0;
     padding: clamp(0.9rem, 4vw, 1.1rem);
+  }
+
+  .communications-console__relay-readout {
+    grid-template-columns: 1fr;
+    margin-top: 1.15rem;
+  }
+
+  .communications-console__relay-readout > div {
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    align-items: baseline;
   }
 
   .communications-console__relay strong {
