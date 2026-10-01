@@ -63,12 +63,24 @@ GITHUB_USERNAME
 GITHUB_TOKEN
 MAPBOX_ACCESS_TOKEN
 NEXT_PUBLIC_MAPBOX_TOKEN
+OPENAI_API_KEY
+OPENAI_MODEL
+JAMAL_ENABLED
 ```
+
+JAMAL is disabled unless `JAMAL_ENABLED=true`. Keep `OPENAI_API_KEY` and
+`OPENAI_MODEL` server-side; neither variable should use the `NEXT_PUBLIC_`
+prefix. The default model is `gpt-5-mini` when `OPENAI_MODEL` is omitted.
+
+Before enabling JAMAL on a public deployment, configure a Vercel WAF rate-limit
+rule for `/api/jamal` (initial target: 10 requests per five minutes per visitor),
+use a dedicated OpenAI project, and set spend alerts and a hard monthly limit.
 
 Build and lint checks:
 
 ```bash
 npm run lint
+npm run test
 npm run build
 ```
 

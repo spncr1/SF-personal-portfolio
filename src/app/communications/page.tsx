@@ -1,49 +1,12 @@
 import type { Metadata } from "next";
 import { HudPanel } from "@/components/ui/HudPanel";
-import { SiteIcon, type SiteIconName } from "@/components/ui/SiteIcon";
+import { SiteIcon } from "@/components/ui/SiteIcon";
 import { SystemLabel } from "@/components/ui/SystemLabel";
+import { contactChannels } from "@/data/contact";
 
 export const metadata: Metadata = {
   title: "Contact | Spencer Fisher",
 };
-
-const channels = [
-  {
-    id: "email",
-    label: "Email",
-    value: "spencerflorackfisher@gmail.com",
-    href: "mailto:spencerflorackfisher@gmail.com",
-    external: false,
-  },
-  {
-    id: "phone",
-    label: "Phone",
-    value: "0431189783",
-    href: "tel:+61431189783",
-    external: false,
-  },
-  {
-    id: "linkedin",
-    label: "LinkedIn",
-    value: "spencer-fisher",
-    href: "https://www.linkedin.com/in/spencer-fisher/",
-    external: true,
-  },
-  {
-    id: "github",
-    label: "GitHub",
-    value: "@spncr1",
-    href: "https://github.com/spncr1",
-    external: true,
-  },
-  {
-    id: "resume",
-    label: "Resume",
-    value: "Resume",
-    href: "/documents/spencer-fisher-resume.pdf",
-    external: true,
-  },
-] as const;
 
 export default function CommunicationsPage() {
   return (
@@ -68,7 +31,7 @@ export default function CommunicationsPage() {
             </div>
             <div>
               <dt>Channels</dt>
-              <dd>{String(channels.length).padStart(2, "0")} available</dd>
+              <dd>{String(contactChannels.length).padStart(2, "0")} available</dd>
             </div>
             <div>
               <dt>Route</dt>
@@ -83,7 +46,7 @@ export default function CommunicationsPage() {
 
         <HudPanel className="communications-console__channels" label="Available comms channels">
           <ul className="communications-console__channel-list">
-            {channels.map((channel) => (
+            {contactChannels.map((channel) => (
               <li key={channel.id}>
                 <a
                   className="communications-console__channel"
@@ -92,7 +55,7 @@ export default function CommunicationsPage() {
                   target={channel.external ? "_blank" : undefined}
                   rel={channel.external ? "noreferrer" : undefined}
                 >
-                  <ChannelIcon type={channel.id} />
+                  <SiteIcon className="communications-console__channel-icon" name={channel.icon} />
                   <strong>{channel.value}</strong>
                   {channel.external && <SiteIcon className="communications-console__external-icon" name="open-in-new" />}
                 </a>
@@ -140,17 +103,4 @@ function RadioChatter() {
       })}
     </svg>
   );
-}
-
-function ChannelIcon({ type }: { type: (typeof channels)[number]["id"] }) {
-  const suppliedIcons: Partial<Record<(typeof channels)[number]["id"], SiteIconName>> = {
-    email: "mail",
-    phone: "call",
-    linkedin: "linkedin",
-    github: "github",
-    resume: "description",
-  };
-  const suppliedIcon = suppliedIcons[type];
-
-  return <SiteIcon className="communications-console__channel-icon" name={suppliedIcon ?? "code"} />;
 }

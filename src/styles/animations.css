@@ -37,22 +37,6 @@
   }
 }
 
-@keyframes sector-scan-ready {
-  0% {
-    opacity: 0;
-    transform: translateY(-0.75rem);
-  }
-  18%,
-  72% {
-    opacity: 0.75;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(0.35rem);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

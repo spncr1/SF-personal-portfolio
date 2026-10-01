@@ -114,29 +114,6 @@ ul {
   min-height: 100%;
 }
 
-.sector-transition__scan {
-  pointer-events: none;
-  position: absolute;
-  inset: 0 0 auto;
-  z-index: 5;
-  display: flex;
-  justify-content: center;
-  gap: var(--space-lg);
-  height: 2rem;
-  color: var(--color-secondary);
-  font-family: var(--font-mono);
-  font-size: 0.55rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  opacity: 0;
-  transform: translateY(-0.75rem);
-  animation: sector-scan-ready 900ms ease-out;
-}
-
-.sector-transition__scan span {
-  text-shadow: var(--glow-secondary);
-}
-
 .network-map {
   display: block;
   width: 100%;
@@ -3601,10 +3578,6 @@ ul {
 @media (max-width: 720px) {
   .sector {
     padding: var(--space-md);
-  }
-
-  .sector-transition__scan {
-    display: none;
   }
 
   .sector-frame__masthead {

@@ -133,7 +133,7 @@ export const profile: Profile = {
       icon: "drawing",
     },
   ],
-  portrait: "/images/profile/spencer-fisher-3.webp",
+  portrait: "/images/profile/spencer-fisher-3.jpg",
   identityPortrait: "/images/profile/spencer-fisher-2.jpg",
   personnelPortrait: "/images/profile/spencer-fisher.jpg",
 };

@@ -4,6 +4,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import "@/styles/globals.css";
 import "@/styles/animations.css";
 import "@/styles/hud.css";
+import "@/styles/jamal.css";
 import { SystemShell } from "@/components/system/SystemShell";
 import { Analytics } from "@vercel/analytics/react"
 
@@ -28,7 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${exo.variable} ${jetbrains.variable}`}>
       <body>
-        <SystemShell>{children}</SystemShell>
+        <SystemShell jamalEnabled={process.env.JAMAL_ENABLED === "true"}>{children}</SystemShell>
         <Analytics />
       </body>
     </html>

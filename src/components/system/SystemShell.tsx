@@ -8,9 +8,11 @@ import { BootSequence } from "./BootSequence";
 import { MiniMap } from "./MiniMap";
 import { SectorTransition } from "./SectorTransition";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
+import { JamalController } from "@/components/jamal/JamalController";
 
 interface SystemShellProps {
   children: ReactNode;
+  jamalEnabled?: boolean;
 }
 
 const BOOT_SESSION_KEY = "sf-ops-boot-complete";
@@ -32,12 +34,13 @@ function rememberCompletedBoot() {
   }
 }
 
-export function SystemShell({ children }: SystemShellProps) {
+export function SystemShell({ children, jamalEnabled = false }: SystemShellProps) {
   const pathname = usePathname();
   const sector = getSectorFromPathname(pathname);
   const isHub = sector.id === "hub";
   const [bootState, setBootState] = useState<"checking" | "running" | "complete">("checking");
   const [mobileNetworkOpen, setMobileNetworkOpen] = useState(false);
+  const [jamalOpen, setJamalOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -68,6 +71,11 @@ export function SystemShell({ children }: SystemShellProps) {
     setMobileNetworkOpen(false);
   }, [setMobileNetworkOpen]);
 
+  const handleJamalOpenChange = useCallback((open: boolean) => {
+    setJamalOpen(open);
+    if (!open) setMobileNetworkOpen(false);
+  }, [setJamalOpen, setMobileNetworkOpen]);
+
   return (
     <div
       className="system-shell"
@@ -75,6 +83,8 @@ export function SystemShell({ children }: SystemShellProps) {
       data-route={pathname}
       data-boot={bootState}
       data-network-open={!isHub && mobileNetworkOpen ? true : undefined}
+      data-jamal-enabled={jamalEnabled ? true : undefined}
+      data-jamal-open={jamalEnabled && jamalOpen ? true : undefined}
     >
       <div className="system-shell__haze" aria-hidden="true" />
       <div className="system-shell__grid" aria-hidden="true" />
@@ -136,6 +146,8 @@ export function SystemShell({ children }: SystemShellProps) {
           <span className="system-shell__footer-detail">{" // Personal interface"}</span>
         </span>
       </footer>
+
+      <JamalController enabled={jamalEnabled} pathname={pathname} onOpenChange={handleJamalOpenChange} />
 
       {bootState === "running" && <BootSequence onComplete={completeBoot} />}
     </div>
