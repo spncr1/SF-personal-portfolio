@@ -27,6 +27,11 @@ export default function CentralHubPage() {
       <aside className="central-hub__rail central-hub__rail--right" aria-label="System intel" data-system-load>
         <SystemLabel variant="metadata">System Intel</SystemLabel>
         <GitHubIntel />
+        <div
+          id="jamal-hub-activation-host"
+          className="central-hub__jamal-host"
+          aria-label="JAMAL assistant access"
+        />
         <SydneyMap />
       </aside>
 

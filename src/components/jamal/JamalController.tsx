@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { getJamalSuggestedQuestions } from "@/lib/jamal/context";
 import type {
   JamalApiResponse,
@@ -70,6 +71,7 @@ export function JamalController({ enabled, pathname, onOpenChange }: JamalContro
   const [open, setOpen] = useState(false);
   const [wideDesktop, setWideDesktop] = useState(false);
   const [mobile, setMobile] = useState(false);
+  const [hubActivationHost, setHubActivationHost] = useState<HTMLElement | null>(null);
   const [messages, setMessages] = useState<JamalDisplayMessage[]>([WELCOME_MESSAGE]);
   const [input, setInput] = useState("");
   const [processing, setProcessing] = useState(false);
@@ -80,6 +82,7 @@ export function JamalController({ enabled, pathname, onOpenChange }: JamalContro
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const activationButtonRef = useRef<HTMLButtonElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const restoreActivationFocusRef = useRef(false);
   const modal = !wideDesktop && !mobile;
 
   const updateOpen = useCallback(
@@ -107,6 +110,18 @@ export function JamalController({ enabled, pathname, onOpenChange }: JamalContro
   }, []);
 
   useEffect(() => () => abortControllerRef.current?.abort(), []);
+
+  useEffect(() => {
+    const syncFrame = window.requestAnimationFrame(() => {
+      setHubActivationHost(
+        pathname === "/" && !mobile
+          ? document.getElementById("jamal-hub-activation-host")
+          : null,
+      );
+    });
+
+    return () => window.cancelAnimationFrame(syncFrame);
+  }, [mobile, pathname]);
 
   useEffect(() => {
     if (!open) return;
@@ -163,7 +178,15 @@ export function JamalController({ enabled, pathname, onOpenChange }: JamalContro
   }, [modal, open, updateOpen]);
 
   useEffect(() => {
-    if (!open) activationButtonRef.current?.focus();
+    if (open) {
+      restoreActivationFocusRef.current = true;
+      return;
+    }
+
+    if (!restoreActivationFocusRef.current) return;
+
+    activationButtonRef.current?.focus({ preventScroll: true });
+    restoreActivationFocusRef.current = false;
   }, [open]);
 
   const sendRequest = useCallback(
@@ -236,16 +259,20 @@ export function JamalController({ enabled, pathname, onOpenChange }: JamalContro
 
   if (!enabled) return null;
 
+  const activationNode = (
+    <JamalActivationNode
+      embedded={Boolean(hubActivationHost)}
+      open={open}
+      processing={processing}
+      unavailable={Boolean(errorMessage)}
+      onActivate={() => updateOpen(true)}
+      buttonRef={activationButtonRef}
+    />
+  );
+
   return (
     <>
-      <JamalActivationNode
-        open={open}
-        mobile={mobile}
-        processing={processing}
-        unavailable={Boolean(errorMessage)}
-        onActivate={() => updateOpen(true)}
-        buttonRef={activationButtonRef}
-      />
+      {hubActivationHost ? createPortal(activationNode, hubActivationHost) : activationNode}
 
       <AnimatePresence>
         {open && modal && (

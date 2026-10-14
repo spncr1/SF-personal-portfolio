@@ -4,8 +4,8 @@ import { motion, useReducedMotion } from "motion/react";
 import { JamalIdentityMark } from "./JamalIdentityMark";
 
 interface JamalActivationNodeProps {
+  embedded?: boolean;
   open: boolean;
-  mobile: boolean;
   processing: boolean;
   unavailable: boolean;
   onActivate: () => void;
@@ -13,8 +13,8 @@ interface JamalActivationNodeProps {
 }
 
 export function JamalActivationNode({
+  embedded = false,
   open,
-  mobile,
   processing,
   unavailable,
   onActivate,
@@ -26,7 +26,7 @@ export function JamalActivationNode({
   return (
     <motion.button
       ref={buttonRef}
-      className="jamal-activation"
+      className={`jamal-activation${embedded ? " jamal-activation--embedded" : ""}`}
       type="button"
       aria-label={open ? "JAMAL panel is open" : "Open JAMAL assistant"}
       aria-controls="jamal-panel"
@@ -38,7 +38,7 @@ export function JamalActivationNode({
       transition={reduceMotion ? { duration: 0 } : { duration: 0.2, ease: "easeOut" }}
       tabIndex={open ? -1 : 0}
     >
-      <JamalIdentityMark compact bare={!mobile} />
+      <JamalIdentityMark compact />
       <span className="jamal-activation__copy">
         <strong>JAMAL</strong>
         <small>{status}</small>

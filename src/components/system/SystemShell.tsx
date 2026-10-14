@@ -39,7 +39,7 @@ export function SystemShell({ children, jamalEnabled = false }: SystemShellProps
   const sector = getSectorFromPathname(pathname);
   const isHub = sector.id === "hub";
   const [bootState, setBootState] = useState<"checking" | "running" | "complete">("checking");
-  const [mobileNetworkOpen, setMobileNetworkOpen] = useState(false);
+  const [sectionNetworkOpen, setSectionNetworkOpen] = useState(false);
   const [jamalOpen, setJamalOpen] = useState(false);
 
   useEffect(() => {
@@ -67,14 +67,13 @@ export function SystemShell({ children, jamalEnabled = false }: SystemShellProps
     setBootState("complete");
   }, []);
 
-  const closeMobileNetwork = useCallback(() => {
-    setMobileNetworkOpen(false);
-  }, [setMobileNetworkOpen]);
+  const closeSectionNetwork = useCallback(() => {
+    setSectionNetworkOpen(false);
+  }, [setSectionNetworkOpen]);
 
   const handleJamalOpenChange = useCallback((open: boolean) => {
     setJamalOpen(open);
-    if (!open) setMobileNetworkOpen(false);
-  }, [setJamalOpen, setMobileNetworkOpen]);
+  }, [setJamalOpen]);
 
   return (
     <div
@@ -82,7 +81,7 @@ export function SystemShell({ children, jamalEnabled = false }: SystemShellProps
       data-sector={sector.id}
       data-route={pathname}
       data-boot={bootState}
-      data-network-open={!isHub && mobileNetworkOpen ? true : undefined}
+      data-network-open={!isHub && sectionNetworkOpen ? true : undefined}
       data-jamal-enabled={jamalEnabled ? true : undefined}
       data-jamal-open={jamalEnabled && jamalOpen ? true : undefined}
     >
@@ -107,14 +106,14 @@ export function SystemShell({ children, jamalEnabled = false }: SystemShellProps
           <button
             className="system-shell__mobile-network-trigger"
             type="button"
-            aria-expanded={mobileNetworkOpen}
+            aria-expanded={sectionNetworkOpen}
             aria-controls="section-network-dialog"
             aria-label={
-              mobileNetworkOpen
+              sectionNetworkOpen
                 ? "Close section network"
                 : `Open section network. Current section: ${sector.label}`
             }
-            onClick={() => setMobileNetworkOpen((open) => !open)}
+            onClick={() => setSectionNetworkOpen((open) => !open)}
           >
             <i aria-hidden="true" />
             <span>Section</span>
@@ -131,12 +130,13 @@ export function SystemShell({ children, jamalEnabled = false }: SystemShellProps
             {children}
           </SectorTransition>
         </div>
-        <MiniMap
-          activeSector={sector.id}
-          showCompact={!isHub}
-          mobileOpen={!isHub && mobileNetworkOpen}
-          onMobileClose={closeMobileNetwork}
-        />
+        {!isHub && (
+          <MiniMap
+            activeSector={sector.id}
+            open={sectionNetworkOpen}
+            onClose={closeSectionNetwork}
+          />
+        )}
       </main>
 
       <footer className="system-shell__footer">

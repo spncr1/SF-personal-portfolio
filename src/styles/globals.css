@@ -3757,6 +3757,14 @@ ul {
   padding-top: 0.9rem;
 }
 
+.central-hub__jamal-host {
+  display: flex;
+  align-items: center;
+  justify-content: stretch;
+  border-top: 1px solid rgba(var(--rgb-ember), 0.26);
+  padding-block: 0.75rem 0.1rem;
+}
+
 .central-hub__github-header {
   display: flex;
   align-items: center;
@@ -5164,6 +5172,10 @@ ul {
     height: auto;
     gap: clamp(0.8rem, 3.5vw, 1rem);
     padding: clamp(0.85rem, 4vw, 1rem);
+  }
+
+  .central-hub__jamal-host {
+    display: none;
   }
 
   .central-hub__github-intel {
