@@ -35,3 +35,13 @@ Before completing JAMAL-related work:
 
 Never increment JAMAL's version for changes unrelated to JAMAL.
 Never make a versioning decision based solely on lines changed.
+
+## Project Systems Data Integration
+
+Before adding or materially updating any project shown in Project Systems, read
+and follow the **Project Systems Project Data** rules in `PRODUCT_RULES.md`.
+Those rules govern the complete project record, including descriptions, links,
+logos, screenshots, demonstrations, features, statistics, technology stack,
+architecture, rendering behaviour, evidence and verification. Treat
+`PRODUCT_RULES.md` as the source of truth for this workflow rather than handling
+each content type as a separate ad hoc update.

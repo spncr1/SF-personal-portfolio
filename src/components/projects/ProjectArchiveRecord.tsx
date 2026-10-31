@@ -1,144 +1,255 @@
 "use client";
 
 import Image from "next/image";
-import type { ReactNode } from "react";
-import { useState } from "react";
-import { motion } from "motion/react";
+import type { KeyboardEvent, ReactNode } from "react";
+import { useEffect, useId, useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 
 import { ProjectActivityTimeline } from "@/components/projects/ProjectActivityTimeline";
-import type { ProjectDetail } from "@/types/project";
+import { ProjectArchitectureVisualisation } from "@/components/projects/ProjectArchitectureVisualisation";
+import { ProjectDevelopmentProcess } from "@/components/projects/ProjectDevelopmentProcess";
+import { ProjectEngineeringDossier } from "@/components/projects/ProjectEngineeringDossier";
+import { SiteIcon } from "@/components/ui/SiteIcon";
 import { TechnologyBadge } from "@/components/ui/TechnologyBadge";
+import type { ProjectDetail } from "@/types/project";
 
 interface ProjectArchiveRecordProps {
   project: ProjectDetail;
   reduceMotion: boolean;
 }
 
+const dossierSections = ["overview", "engineering", "process", "results", "github"] as const;
+type DossierSection = (typeof dossierSections)[number];
+
+const dossierLabels: Record<DossierSection, string> = {
+  overview: "Overview",
+  engineering: "Engineering",
+  process: "Process",
+  results: "Results",
+  github: "GitHub",
+};
+
 export function ProjectArchiveRecord({ project, reduceMotion }: ProjectArchiveRecordProps) {
-  const [activeVisualIndex, setActiveVisualIndex] = useState(0);
-  const activeVisual = project.visualRecords[activeVisualIndex] ?? project.visualRecords[0];
+  const [activeVisualSrc, setActiveVisualSrc] = useState(project.visualRecords[0].src);
+  const [activeSection, setActiveSection] = useState<DossierSection>("overview");
+  const [entryStaggerActive, setEntryStaggerActive] = useState(true);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const tabSetId = useId();
+  const selectedVisualIndex = project.visualRecords.findIndex((visual) => visual.src === activeVisualSrc);
+  const activeVisualIndex = selectedVisualIndex >= 0 ? selectedVisualIndex : 0;
+  const activeVisual = project.visualRecords[activeVisualIndex];
+
+  useEffect(() => {
+    if (reduceMotion) return;
+
+    const entryTimer = window.setTimeout(() => setEntryStaggerActive(false), 2200);
+    return () => window.clearTimeout(entryTimer);
+  }, [reduceMotion]);
+
+  function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, currentIndex: number) {
+    let nextIndex: number | null = null;
+    const lastIndex = dossierSections.length - 1;
+
+    if (event.key === "ArrowRight") nextIndex = currentIndex === lastIndex ? 0 : currentIndex + 1;
+    if (event.key === "ArrowLeft") nextIndex = currentIndex === 0 ? lastIndex : currentIndex - 1;
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = lastIndex;
+    if (nextIndex === null) return;
+
+    event.preventDefault();
+    const nextSection = dossierSections[nextIndex];
+    setActiveSection(nextSection);
+    tabRefs.current[nextIndex]?.focus();
+  }
 
   return (
     <motion.article
       className="project-record"
+      data-stagger-entry={!reduceMotion && entryStaggerActive ? "true" : "false"}
       aria-labelledby="project-record-title"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={reduceMotion ? { duration: 0 } : { duration: 0.2 }}
+      transition={reduceMotion ? { duration: 0 } : { duration: 0.24 }}
     >
-      <RecordField index={0} reduceMotion={reduceMotion} className="project-record__identity">
-        <p>{project.category}</p>
-        <h2 id="project-record-title">{project.title}</h2>
-        <span>{project.description}</span>
-      </RecordField>
+      <div className="project-record__inspection-deck">
+        <section className="project-record__identity" data-project={project.slug}>
+          <div className="project-record__identity-heading">
+            <span className="project-record__identity-mark" data-project={project.slug}>
+              <Image src={project.brand.src} alt={project.brand.alt} width={220} height={220} />
+            </span>
+            <div>
+              <h2 id="project-record-title">{project.title}</h2>
+            </div>
+          </div>
+          <p className="project-record__description">{project.description}</p>
 
-      <RecordField index={1} reduceMotion={reduceMotion} label="Visual snapshot" className="project-record__visual-field">
-        <div className="project-record__gallery">
-          <figure className="project-record__hero-visual">
-            <Image
-              className="project-record__image"
-              src={activeVisual.src}
-              alt={activeVisual.alt}
-              width={1440}
-              height={778}
-              priority
-            />
-            <figcaption>
-              <span>{String(activeVisualIndex + 1).padStart(2, "0")}</span>
-              {activeVisual.label}
-            </figcaption>
+          <ul className="project-record__technology-list" aria-label="Technical stack">
+            {project.stack.map((technology) => (
+              <li key={technology}><TechnologyBadge technology={technology} /></li>
+            ))}
+          </ul>
+
+          <div className="project-record__actions">
+            {project.live && (
+              <a className="project-record__action project-record__action--primary" href={project.live} target="_blank" rel="noreferrer">
+                <SiteIcon className="project-record__action-brand" name="vercel" />
+                <span>Launch app</span>
+                <SiteIcon className="project-record__action-link" name="open-in-new" />
+              </a>
+            )}
+            {project.github && (
+              <a className="project-record__action" href={project.github} target="_blank" rel="noreferrer">
+                <SiteIcon className="project-record__action-brand" name="github" />
+                <span>View GitHub</span>
+                <SiteIcon className="project-record__action-link" name="open-in-new" />
+              </a>
+            )}
+          </div>
+        </section>
+
+        <section className="project-preview" aria-label={`${project.title} application screenshots`}>
+          <div className="project-preview__halo" aria-hidden="true" />
+          <div className="project-preview__projector" aria-hidden="true">
+            <span className="project-preview__beam project-preview__beam--blue" />
+            <span className="project-preview__beam project-preview__beam--amber" />
+            <span className="project-preview__emitter-shadow" />
+            <div className="project-preview__emitter">
+              <span className="project-preview__emitter-platform" />
+              <span className="project-preview__emitter-ring project-preview__emitter-ring--outer" />
+              <span className="project-preview__emitter-ring project-preview__emitter-ring--middle" />
+              <span className="project-preview__emitter-ring project-preview__emitter-ring--inner" />
+              <span className="project-preview__emitter-core" />
+            </div>
+          </div>
+          <figure className="project-preview__display">
+            <span className="project-preview__frame" aria-hidden="true" />
+            <Image className="project-preview__image" src={activeVisual.src} alt={activeVisual.alt} width={1440} height={778} priority />
+            <figcaption><span>{String(activeVisualIndex + 1).padStart(2, "0")}</span>{activeVisual.label}</figcaption>
           </figure>
-
           {project.visualRecords.length > 1 && (
-            <div className="project-record__visual-selector" aria-label={`${project.title} screenshots`}>
+            <div className="project-preview__selector">
               {project.visualRecords.map((visual, index) => (
                 <button
                   key={visual.src}
                   type="button"
                   aria-label={`Show ${visual.label}`}
                   aria-pressed={index === activeVisualIndex}
-                  onClick={() => setActiveVisualIndex(index)}
+                  onClick={() => setActiveVisualSrc(visual.src)}
                 >
                   <Image src={visual.src} alt="" width={320} height={173} />
-                  <span>{visual.label}</span>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
                 </button>
               ))}
             </div>
           )}
+        </section>
+      </div>
+
+      <div className="project-dossier">
+        <div className="project-dossier__nav-shell">
+          <div className="project-dossier__nav" role="tablist" aria-label={`${project.title} dossier sections`}>
+            {dossierSections.map((section, index) => {
+              const selected = activeSection === section;
+              return (
+                <button
+                  key={section}
+                  ref={(node) => { tabRefs.current[index] = node; }}
+                  id={`${tabSetId}-${section}-tab`}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  aria-controls={`${tabSetId}-${section}-panel`}
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => setActiveSection(section)}
+                  onKeyDown={(event) => handleTabKeyDown(event, index)}
+                >
+                  {dossierLabels[section]}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </RecordField>
 
-      <RecordField index={2} reduceMotion={reduceMotion} label="Problem solved">
-        <p className="project-record__body">{project.problemSolved}</p>
-      </RecordField>
-
-      <RecordField index={3} reduceMotion={reduceMotion} label="Stack & architecture">
-        <p className="project-record__body">{project.architectureSummary}</p>
-        <ul className="capabilities-matrix__technologies project-record__technology-list" aria-label="Technology stack">
-          {project.stack.map((technology) => (
-            <li key={technology}>
-              <TechnologyBadge technology={technology} />
-            </li>
-          ))}
-        </ul>
-      </RecordField>
-
-      <RecordField index={4} reduceMotion={reduceMotion} label="Key features">
-        <ol className="project-record__features">
-          {project.keyFeatures.map((feature, index) => (
-            <li key={feature}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <p>{feature}</p>
-            </li>
-          ))}
-        </ol>
-      </RecordField>
-
-      {project.verifiedStats.length > 0 && (
-        <RecordField index={5} reduceMotion={reduceMotion} label="Stats">
-          <dl className="project-record__stats">
-            {project.verifiedStats.map((stat) => (
-              <div key={stat.label} title={stat.evidence}>
-                <dd className="project-record__stat-value">{stat.value}</dd>
-                <dt>{stat.label}</dt>
-                <dd className="project-record__stat-evidence">{stat.evidence}</dd>
-              </div>
-            ))}
-          </dl>
-        </RecordField>
-      )}
-
-      <RecordField index={6} reduceMotion={reduceMotion} label="Timeline" className="project-record__timeline-field">
-        <ProjectActivityTimeline project={project} />
-      </RecordField>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            className="project-dossier__panel"
+            key={activeSection}
+            id={`${tabSetId}-${activeSection}-panel`}
+            role="tabpanel"
+            aria-labelledby={`${tabSetId}-${activeSection}-tab`}
+            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+            transition={{ duration: reduceMotion ? 0 : 0.2, ease: "easeOut" }}
+          >
+            {activeSection === "overview" && <OverviewDossier project={project} reduceMotion={reduceMotion} />}
+            {activeSection === "engineering" && <ProjectEngineeringDossier project={project} />}
+            {activeSection === "process" && <ProcessDossier project={project} />}
+            {activeSection === "results" && <ResultsDossier project={project} />}
+            {activeSection === "github" && <GitHubDossier project={project} />}
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </motion.article>
   );
 }
 
-function RecordField({
-  children,
-  className,
-  index,
-  label,
-  reduceMotion,
-}: {
-  children: ReactNode;
-  className?: string;
-  index: number;
-  label?: string;
-  reduceMotion: boolean;
-}) {
-  const classes = ["project-record__field", className].filter(Boolean).join(" ");
+function OverviewDossier({ project, reduceMotion }: ProjectArchiveRecordProps) {
+  const demonstrationVisual = project.visualRecords[0];
 
   return (
-    <motion.section
-      className={classes}
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={reduceMotion ? { duration: 0 } : { duration: 0.32, delay: index * 0.09, ease: "easeOut" }}
-    >
-      {label && <h3>{label}</h3>}
-      {children}
-    </motion.section>
+    <div className="project-overview">
+      <DossierModule index="01" title="Project demo" className="project-overview__demonstration">
+        <figure className="project-demonstration">
+          <Image src={demonstrationVisual.src} alt={demonstrationVisual.alt} width={1440} height={810} />
+          <figcaption>
+            <span>Demonstration poster</span>
+            <strong>{demonstrationVisual.label}</strong>
+            <small>Narrated demonstration pending</small>
+          </figcaption>
+        </figure>
+      </DossierModule>
+
+      <DossierModule index="02" title="Key features" className="project-overview__features">
+        <ol className="project-feature-list">
+          {project.keyFeatures.map((feature, index) => (
+            <li key={feature}><span>{String(index + 1).padStart(2, "0")}</span><p>{feature}</p></li>
+          ))}
+        </ol>
+      </DossierModule>
+
+      <DossierModule index="03" title="Architecture overview" className="project-overview__architecture">
+        <ProjectArchitectureVisualisation project={project} reduceMotion={reduceMotion} />
+      </DossierModule>
+    </div>
   );
+}
+
+function ProcessDossier({ project }: { project: ProjectDetail }) {
+  return (
+    <DossierModule index="01" title="Development process" className="project-development-section">
+      <ProjectDevelopmentProcess key={project.slug} project={project} />
+    </DossierModule>
+  );
+}
+
+function ResultsDossier({ project }: { project: ProjectDetail }) {
+  return (
+    <DossierModule index="01" title="Verified results">
+      <dl className="project-results">
+        {project.verifiedStats.map((stat) => (
+          <div key={stat.label}><dd>{stat.value}</dd><dt>{stat.label}</dt><dd>{stat.evidence}</dd></div>
+        ))}
+      </dl>
+    </DossierModule>
+  );
+}
+
+function GitHubDossier({ project }: { project: ProjectDetail }) {
+  return <DossierModule index="01" title="Repository activity"><ProjectActivityTimeline project={project} /></DossierModule>;
+}
+
+function DossierModule({ children, className, index, title }: { children: ReactNode; className?: string; index: string; title: string }) {
+  const classes = ["project-dossier__module", className].filter(Boolean).join(" ");
+  return <section className={classes}><h3><span>[ {index} ]</span>{title}</h3><div className="project-dossier__module-content">{children}</div></section>;
 }

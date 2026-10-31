@@ -32,8 +32,10 @@ export function ProjectSystemsClient({ initialSlug }: ProjectSystemsClientProps)
   return (
     <section className="sector sector--projects project-systems">
       <header className="project-systems__masthead">
-        <SystemLabel>Engineering Database</SystemLabel>
-        <h1>Project Systems</h1>
+        <div>
+          <SystemLabel>Engineering Database</SystemLabel>
+          <h1>Project Systems</h1>
+        </div>
       </header>
 
       <div className="project-systems__workspace">

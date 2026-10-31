@@ -3,8 +3,8 @@ import type { OperationRepositoryId } from "@/types/github";
 export const DEFAULT_GITHUB_USERNAME = "spncr1";
 
 export const githubRepositories: Record<OperationRepositoryId, { repository: string }> = {
-  "atmos-fc": { repository: "atmosfc-v1" },
-  nexa: { repository: "nexa-v2" },
+  "atmos-fc": { repository: "atmos-fc" },
+  nexa: { repository: "nexa" },
   portfolio: { repository: "SF-personal-portfolio" },
 };
 

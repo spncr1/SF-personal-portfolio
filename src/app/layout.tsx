@@ -4,6 +4,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import "@/styles/globals.css";
 import "@/styles/animations.css";
 import "@/styles/hud.css";
+import "@/styles/projects.css";
 import "@/styles/jamal.css";
 import { SystemShell } from "@/components/system/SystemShell";
 import { Analytics } from "@vercel/analytics/react"
