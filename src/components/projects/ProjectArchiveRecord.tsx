@@ -89,22 +89,7 @@ export function ProjectArchiveRecord({ project, reduceMotion }: ProjectArchiveRe
             ))}
           </ul>
 
-          <div className="project-record__actions">
-            {project.live && (
-              <a className="project-record__action project-record__action--primary" href={project.live} target="_blank" rel="noreferrer">
-                <SiteIcon className="project-record__action-brand" name="vercel" />
-                <span>Launch app</span>
-                <SiteIcon className="project-record__action-link" name="open-in-new" />
-              </a>
-            )}
-            {project.github && (
-              <a className="project-record__action" href={project.github} target="_blank" rel="noreferrer">
-                <SiteIcon className="project-record__action-brand" name="github" />
-                <span>View GitHub</span>
-                <SiteIcon className="project-record__action-link" name="open-in-new" />
-              </a>
-            )}
-          </div>
+          <ProjectRecordActions project={project} placement="desktop" />
         </section>
 
         <section className="project-preview" aria-label={`${project.title} application screenshots`}>
@@ -123,7 +108,7 @@ export function ProjectArchiveRecord({ project, reduceMotion }: ProjectArchiveRe
           </div>
           <figure className="project-preview__display">
             <span className="project-preview__frame" aria-hidden="true" />
-            <Image className="project-preview__image" src={activeVisual.src} alt={activeVisual.alt} width={1440} height={778} priority />
+            <Image key={activeVisual.src} className="project-preview__image" src={activeVisual.src} alt={activeVisual.alt} width={1440} height={778} priority />
             <figcaption><span>{String(activeVisualIndex + 1).padStart(2, "0")}</span>{activeVisual.label}</figcaption>
           </figure>
           {project.visualRecords.length > 1 && (
@@ -143,6 +128,7 @@ export function ProjectArchiveRecord({ project, reduceMotion }: ProjectArchiveRe
             </div>
           )}
         </section>
+        <ProjectRecordActions project={project} placement="mobile" />
       </div>
 
       <div className="project-dossier">
@@ -191,6 +177,29 @@ export function ProjectArchiveRecord({ project, reduceMotion }: ProjectArchiveRe
         </AnimatePresence>
       </div>
     </motion.article>
+  );
+}
+
+function ProjectRecordActions({ project, placement }: { project: ProjectDetail; placement: "desktop" | "mobile" }) {
+  if (!project.live && !project.github) return null;
+
+  return (
+    <div className={`project-record__actions project-record__actions--${placement}`}>
+      {project.live && (
+        <a className="project-record__action project-record__action--primary" href={project.live} target="_blank" rel="noreferrer">
+          <SiteIcon className="project-record__action-brand" name="vercel" />
+          <span>Launch app</span>
+          <SiteIcon className="project-record__action-link" name="open-in-new" />
+        </a>
+      )}
+      {project.github && (
+        <a className="project-record__action" href={project.github} target="_blank" rel="noreferrer">
+          <SiteIcon className="project-record__action-brand" name="github" />
+          <span>View GitHub</span>
+          <SiteIcon className="project-record__action-link" name="open-in-new" />
+        </a>
+      )}
+    </div>
   );
 }
 

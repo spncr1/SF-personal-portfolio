@@ -19,6 +19,7 @@ export function NetworkNode({ sector, active = false, onActivate, onClear, onNav
     <g
       className="network-node"
       data-active={active}
+      data-sector={sector.id}
       transform={`translate(${x * 100}, ${y * 100})`}
       role="link"
       tabIndex={0}

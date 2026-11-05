@@ -22,12 +22,11 @@ export function ProjectDevelopmentProcess({ project }: ProjectDevelopmentProcess
   const [activeIndex, setActiveIndex] = useState(0);
   const milestones = project.developmentProcess.milestones;
   const activeMilestone = milestones[activeIndex];
-  const hasPrevious = activeIndex > 0;
-  const hasNext = activeIndex < milestones.length - 1;
 
   return (
     <div className="development-process" aria-label={`${project.title} development process`}>
       <nav className="development-process__timeline" aria-label="Development milestones">
+        <StageNavigation placement="mobile" activeIndex={activeIndex} count={milestones.length} onChange={setActiveIndex} />
         <ol className="development-process__timeline-list">
           {milestones.map((milestone, index) => {
             const selected = index === activeIndex;
@@ -63,31 +62,7 @@ export function ProjectDevelopmentProcess({ project }: ProjectDevelopmentProcess
       </nav>
 
       <section className="development-process__detail" aria-live="polite">
-        <header className="development-process__stage-header">
-          <span>{String(activeIndex + 1).padStart(2, "0")}</span>
-          <div>
-            <h4>{activeMilestone.title}</h4>
-            <p>{activeMilestone.period}</p>
-          </div>
-          <div className="development-process__stage-navigation">
-            <button
-              aria-label="View previous development milestone"
-              disabled={!hasPrevious}
-              onClick={() => setActiveIndex((index) => Math.max(0, index - 1))}
-              type="button"
-            >
-              <SiteIcon name="chevron-right" />
-            </button>
-            <button
-              aria-label="View next development milestone"
-              disabled={!hasNext}
-              onClick={() => setActiveIndex((index) => Math.min(milestones.length - 1, index + 1))}
-              type="button"
-            >
-              <SiteIcon name="chevron-right" />
-            </button>
-          </div>
-        </header>
+        <StageNavigation placement="desktop" activeIndex={activeIndex} count={milestones.length} onChange={setActiveIndex} />
 
         <div className="development-process__detail-grid" key={activeMilestone.id}>
           {activeMilestone.objective ? (
@@ -133,6 +108,34 @@ export function ProjectDevelopmentProcess({ project }: ProjectDevelopmentProcess
           ) : null}
         </div>
       </section>
+    </div>
+  );
+}
+
+function StageNavigation({ placement, activeIndex, count, onChange }: {
+  placement: "desktop" | "mobile";
+  activeIndex: number;
+  count: number;
+  onChange: (index: number) => void;
+}) {
+  return (
+    <div className={`development-process__stage-navigation development-process__stage-navigation--${placement}`}>
+      <button
+        aria-label="View previous development milestone"
+        disabled={activeIndex === 0}
+        onClick={() => onChange(Math.max(0, activeIndex - 1))}
+        type="button"
+      >
+        <SiteIcon name="chevron-right" />
+      </button>
+      <button
+        aria-label="View next development milestone"
+        disabled={activeIndex === count - 1}
+        onClick={() => onChange(Math.min(count - 1, activeIndex + 1))}
+        type="button"
+      >
+        <SiteIcon name="chevron-right" />
+      </button>
     </div>
   );
 }

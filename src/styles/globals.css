@@ -511,11 +511,46 @@ ul {
   align-content: center;
 }
 
+.project-systems__unlock-content {
+  display: grid;
+  justify-items: center;
+  animation: project-unlock-appear 0.24s ease-out 0.7s both;
+}
+
+@keyframes project-unlock-appear {
+  from { opacity: 0; transform: translateY(0.4rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.project-systems__unlock[data-reduced-motion="true"] .project-systems__unlock-content {
+  animation: none;
+}
+
+.project-systems__unlock .record-reveal-emblem__ring {
+  animation: project-unlock-ring-draw 1.35s ease-in-out 0.7s both;
+}
+
+@keyframes project-unlock-ring-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+.project-systems__unlock .record-reveal-emblem[data-mode="closed"] .record-reveal-emblem__dial {
+  animation-delay: 0.7s;
+  animation-duration: 1.35s;
+  animation-timing-function: ease-in-out;
+}
+
+.project-systems__unlock[data-reduced-motion="true"] .record-reveal-emblem__ring,
+.project-systems__unlock[data-reduced-motion="true"] .record-reveal-emblem[data-mode="closed"] .record-reveal-emblem__dial {
+  animation: none;
+}
+
 .project-systems__unlock .record-reveal-emblem {
   width: min(48vw, 15rem);
 }
 
-.project-systems__unlock > span {
+.project-systems__unlock-content > span {
   margin-top: -1.5rem;
   color: var(--color-text-faint);
   font-family: var(--font-mono);
@@ -5563,6 +5598,10 @@ ul {
     height: auto;
     min-height: 0;
     aspect-ratio: 1 / 1;
+  }
+
+  .network-node[data-sector="projects"] :is(.network-node__label, .network-node__descriptor) {
+    transform: translateX(4px);
   }
 
   .network-map-shell__hud {

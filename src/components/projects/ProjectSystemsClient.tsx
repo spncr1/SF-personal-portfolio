@@ -67,7 +67,7 @@ function ProjectRecordStage({
   useEffect(() => {
     const revealTimer = window.setTimeout(
       () => setRecordOpen(true),
-      reduceMotion ? 0 : 1060,
+      reduceMotion ? 0 : 2300,
     );
 
     return () => window.clearTimeout(revealTimer);
@@ -80,17 +80,20 @@ function ProjectRecordStage({
           <motion.div
             key={`unlock-${project.slug}`}
             className="project-systems__unlock"
+            data-reduced-motion={reduceMotion ? "true" : undefined}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
-            transition={reduceMotion ? { duration: 0 } : { duration: 0.24 }}
+            exit={{ opacity: 0, scale: 0.96, transition: { duration: reduceMotion ? 0 : 0.16, delay: 0 } }}
+            transition={reduceMotion ? { duration: 0 } : { duration: 0.2, delay: 0.65 }}
           >
-            <RecordRevealEmblem
-              mode="closed"
-              ariaLabel={`Unlocking ${project.title} project record`}
-              showNode={false}
-            />
-            <span>Opening {project.recordCode}</span>
+            <div className="project-systems__unlock-content">
+              <RecordRevealEmblem
+                mode="closed"
+                ariaLabel={`Unlocking ${project.title} project record`}
+                showNode={false}
+              />
+              <span>Opening {project.recordCode}</span>
+            </div>
           </motion.div>
         ) : (
           <ProjectArchiveRecord
